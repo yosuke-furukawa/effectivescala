@@ -115,14 +115,14 @@
 
 <h1 class="header">Effective Scala</h1>
 
-<address>Marius Eriksen, Twitter Inc.<br />marius@twitter.com (<a href="http://twitter.com/marius">@marius</a>)</address>
+<address>Marius Eriksen, Twitter Inc.<br />marius@twitter.com (<a href="http://twitter.com/marius">@marius</a>)<br /><br />[translated by Yuta Okamoto (<a href="http://twitter.com/okapies">@okapies</a>)]</address>
 
 <h2>Table of Contents</h2>
 
 <ul>
 <li><strong><a href="#序章 (Introduction)">序章 (Introduction)</a></strong></li>
 <li><strong><a href="#整形">整形</a></strong>: <em><a href="#整形-ホワイトスペース">ホワイトスペース</a></em>, <em><a href="#整形-命名">命名</a></em>, <em><a href="#整形-インポート">インポート</a></em>, <em><a href="#整形-中カッコ">中カッコ</a></em>, <em><a href="#整形-パターンマッチ">パターンマッチ</a></em>, <em><a href="#整形-コメント">コメント</a></em></li>
-<li><strong><a href="#Types and Generics">Types and Generics</a></strong>: <em><a href="#Types and Generics-Return type annotations">Return type annotations</a></em>, <em><a href="#Types and Generics-Variance">Variance</a></em>, <em><a href="#Types and Generics-Type aliases">Type aliases</a></em>, <em><a href="#Types and Generics-Implicits">Implicits</a></em></li>
+<li><strong><a href="#型とジェネリクス">型とジェネリクス</a></strong>: <em><a href="#型とジェネリクス-戻り型アノテーション">戻り型アノテーション</a></em>, <em><a href="#型とジェネリクス-変位">変位</a></em>, <em><a href="#型とジェネリクス-型エイリアス">型エイリアス</a></em>, <em><a href="#型とジェネリクス-暗黙">暗黙</a></em></li>
 <li><strong><a href="#Collections">Collections</a></strong>: <em><a href="#Collections-Hierarchy">Hierarchy</a></em>, <em><a href="#Collections-Use">Use</a></em>, <em><a href="#Collections-Style">Style</a></em>, <em><a href="#Collections-Performance">Performance</a></em>, <em><a href="#Collections-Java Collections">Java Collections</a></em></li>
 <li><strong><a href="#Concurrency">Concurrency</a></strong>: <em><a href="#Concurrency-Futures">Futures</a></em>, <em><a href="#Concurrency-Collections">Collections</a></em></li>
 <li><strong><a href="#Control structures">Control structures</a></strong>: <em><a href="#Control structures-Recursion">Recursion</a></em>, <em><a href="#Control structures-Returns">Returns</a></em>, <em><a href="#Control structures-`for` loops and comprehensions"><code>for</code> loops and comprehensions</a></em>, <em><a href="#Control structures-`require` and `assert`"><code>require</code> and <code>assert</code></a></em></li>
@@ -146,7 +146,7 @@
 
 <p>Scalaは、簡潔な表現を可能にする数多くのツールを提供している。タイピングが少なければ、読む量も少なくなり、読む量が少なくなれば、大抵はより早く読める。故に、簡潔さは明瞭さを高める。しかし、簡潔さはまた、正反対の効果をもたらす使い勝手の悪い道具ともなりえる。正確さに続いて、いつも読み手のことを考えよう。</p>
 
-<p>何よりも、<em>これはScalaだ</em>。君が書いているのはJavaではないし、Haskellでも、Pythonでもない。Scalaのプログラムは、それらのうちのいずれの言語で書かれたものとも違っている。Scalaを効果的に使うには、君の問題をScalaの用語で表現しなければならない。Javaのプログラムを、無理矢理にScalaにしても仕方がない。ほとんどのやり方では、それはオリジナルより劣ったものになるだろう。</p>
+<p>何よりも、<em>Scalaでプログラムするのだ</em>。君が書いているのはJavaではないし、Haskellでも、Pythonでもない。Scalaのプログラムは、それらのうちのいずれの言語で書かれたものとも違っている。Scalaを効果的に使うには、君の問題をScalaの用語で表現しなければならない。Javaのプログラムを、無理矢理にScalaになおしても仕方がない。ほとんどのやり方では、それはオリジナルより劣ったものになるだろう。</p>
 
 <p>これは、Scalaの入門じゃない。読者は、Scalaに慣れ親しんでいることを前提としている。これからScalaを学びたい人は、以下のサイトを参照するといいだろう:</p>
 
@@ -292,37 +292,24 @@ import concurrent</code></pre>のようには書かず、以下のように曖�
 
 <p>アスキーアートや視覚的な装飾に頼ってはいけない。また、APIではなく不必要なコメントをドキュメント化してはいけない。もし、自分のコードの挙動を説明するためにコメントを追加しているのに気づいたら、まず、それが何をするか明白になるように再構成できないか自問してみよう。「それは動く、明らかに (it works, obviously)」よりも「明らかにそれは動く(obviously it works)」の方が良い（<a href="http://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%B3%E3%83%88%E3%83%8B%E3%83%BC%E3%83%BB%E3%83%9B%E3%83%BC%E3%82%A2">ホーア</a>には申し訳ないけど）。</p>
 
-<p><a id="Types and Generics" /></p>
+<p><a id="型とジェネリクス" /></p>
 
-<h2>Types and Generics</h2>
+<h2>型とジェネリクス</h2>
 
-<p>The primary objective of a type system is to detect programming
-errors. The type system effectively provides a limited form of static
-verification, allowing us to express certain kinds of invariants about
-our code that the compiler can verify. Type systems provide other
-benefits too of course, but error checking is its Raison d&#146;&Ecirc;tre.</p>
+<p>型システムの主な目的は、プログラミングの誤りを検出することだ。型システムは、静的検査の制限された方式を効果的に提供する。これにより、コンパイラが検証できるコードにおいて、ある種の不変条件を表現できる。型システムがもたらす恩恵はもちろん他にもあるが、エラーチェックこそ、その存在理由（レーゾンデートル）だ。</p>
 
-<p>Our use of the type system should reflect this goal, but we must
-remain mindful of the reader: judicious use of types can serve to
-enhance clarity, being unduly clever only obfuscates.</p>
+<p>我々が型システムを使う場合はこの目的を踏まえるべきだが、一方で、読み手にも気を配り続けなきゃいけない。型を慎重に使うことでコードの明瞭さを高められるが、過剰に巧妙な使い方はコードを読みにくくするだけだ。</p>
 
-<p>Scala&rsquo;s powerful type system is a common source of academic
-exploration and exercise (eg. <a href="http://apocalisp.wordpress.com/2010/06/08/type-level-programming-in-scala/">Type level programming in
-Scala</a>).
-While a fascinating academic topic, these techniques rarely find
-useful application in production code. They are to be avoided.</p>
+<p>Scalaの強力な型システムは、共通の学術的な探求と実践に基づいている(eg. <a href="http://apocalisp.wordpress.com/2010/06/08/type-level-programming-in-scala/">Type level programming in
+Scala</a>)。これらのテクニックは学術的に興味深いトピックだが、プロダクションコードでの応用において有用であることは稀だ。避けるべきだろう。</p>
 
-<p><a id="Types and Generics-Return type annotations" /></p>
+<p><a id="型とジェネリクス-戻り型アノテーション" /></p>
 
-<h3>Return type annotations</h3>
+<h3>戻り型アノテーション</h3>
 
-<p>While Scala allows these to be omitted, such annotations provide good
-documentation: this is especially important for public methods. Where a
-method is not exposed and its return type obvious, omit them.</p>
+<p>Scalaでは戻り型アノテーションを省略できるが、一方でそれらは良いドキュメンテーションであり、publicメソッドでは特に重要だ。露出していないメソッドで、戻り型が明白な場合は省略しよう。</p>
 
-<p>This is especially important when instantiating objects with mixins as
-the scala compiler creates singleton types for these. For example, <code>make</code>
-in:</p>
+<p>これは、Scalaコンパイラが生成するシングルトン型をミックスインするオブジェクトをインスタンス化する場合は特に重要だ。例えば、<code>make</code> 関数が:</p>
 
 <pre><code>trait Service
 def make() = new Service {
@@ -330,88 +317,76 @@ def make() = new Service {
 }
 </code></pre>
 
-<p class="LP">does <em>not</em> have a return type of <code>Service</code>; the compiler creates the refinement type <code>Object with Service{def getId: Int}</code>. Instead use an explicit annotation:</p>
+<p class="LP"><code>Service</code> という戻り型を<em>持たない</em>場合、コンパイラは細別型(refinement type)である <code>Object with Service{def getId: Int}</code> を生成する。代わりに、明示的なアノテーションを使うと:</p>
 
 <pre><code>def make(): Service = new Service{}
 </code></pre>
 
-<p>Now the author is free to mix in more traits without changing the
-public type of <code>make</code>, making it easier to manage backwards
-compatibility.</p>
+<p><code>make</code> の公開型を変更することなく、さらに好きなだけtraitをミックスできるから、後方互換性の管理が容易になる。</p>
 
-<p><a id="Types and Generics-Variance" /></p>
+<p><a id="型とジェネリクス-変位" /></p>
 
-<h3>Variance</h3>
+<h3>変位</h3>
 
-<p>Variance arises when generics are combined with subtyping. They define
-how subtyping of the <em>contained</em> type relate to subtyping of the
-<em>container</em> type. Because Scala has declaration site variance
-annotations, authors of common libraries &mdash; especially collections &mdash;
-must be prolific annotators. Such annotations are important for the
-usability of shared code, but misapplication can be dangerous.</p>
+<p>変位は、ジェネリクスが派生型と結びつく時に現れる。変位は、<em>コンテナ（含む）型</em>の派生型と、コンテナ型に<em>含まれる型</em>の派生型がどう関連するかを定義する。Scalaでは変位アノテーションを宣言できるから、コレクションに代表される共通ライブラリの作者は、多数のアノテーションを扱う必要がある。変位アノテーションは、共用コードの使い勝手を高める上で重要だが、誤用すると危険なものとなりうる。</p>
 
-<p>Invariants are an advanced but necessary aspect of Scala&rsquo;s typesystem,
-and should be used widely (and correctly) as it aids the application
-of subtyping.</p>
+<p>変位は、Scalaの型システムにおいて高度だが必須の特徴で、アプリケーションの派生型を補助する際に、広く（そして正しく）使われるべきだ。</p>
 
-<p><em>Immutable collections should be covariant</em>. Methods that receive
-the contained type should &ldquo;downgrade&rdquo; the collection appropriately:</p>
+<p><em>不変コレクションは共変であるべきだ</em>。要素型を受け取るメソッドは、コレクションを適切に&ldquo;格下げ&rdquo;すべきだ:</p>
 
 <pre><code>trait Collection[+T] {
   def add[U &gt;: T](other: U): Collection[U]
 }
 </code></pre>
 
-<p><em>Mutable collections should be invariant</em>. Covariance
-is typically invalid with mutable collections. Consider</p>
+<p><em>可変コレクションは不変であるべきだ</em>。一般的に、可変コレクションにおいて共変は無効だ。この</p>
 
 <pre><code>trait HashSet[+T] {
   def add[U &gt;: T](item: U)
 }
 </code></pre>
 
-<p class="LP">and the following type hierarchy:</p>
+<p class="LP">と、以下の型階層を見てほしい:</p>
 
 <pre><code>trait Mammal
 trait Dog extends Mammal
 trait Cat extends Mammal
 </code></pre>
 
-<p class="LP">If I now have a hash set of dogs</p>
+<p class="LP">もし今、犬(Dog)のハッシュセットがあるなら、</p>
 
 <pre><code>val dogs: HashSet[Dog]
 </code></pre>
 
-<p class="LP">treat it as a set of Mammals and add a cat.</p>
+<p class="LP">それを哺乳類(Mammal)の集合として扱ったり、猫(Cat)を追加したりできる。</p>
 
 <pre><code>val mammals: HashSet[Mammal] = dogs
 mammals.add(new Cat{})
 </code></pre>
 
-<p class="LP">This is no longer a HashSet of dogs!</p>
+<p class="LP">これはもはや、犬のHashSetではない！</p>
 
 <!--
   * when to use abstract type members?
   * show contravariance trick?
 -->
 
-<p><a id="Types and Generics-Type aliases" /></p>
+<p><a id="型とジェネリクス-型エイリアス" /></p>
 
-<h3>Type aliases</h3>
+<h3>型エイリアス</h3>
 
-<p>Use type aliases when they provide convenient naming or clarify
-purpose, but do not alias types that are self-explanatory.</p>
+<p>型エイリアスは、簡便な名前を提供したり、意味を明瞭にするために使う。しかし、一目瞭然な型はエイリアスしない。</p>
 
 <pre><code>() =&gt; Int
 </code></pre>
 
-<p class="LP">is clearer than</p>
+<p class="LP">は、簡潔かつ一般的な型を使っているので、</p>
 
 <pre><code>type IntMaker = () =&gt; Int
 IntMaker
 </code></pre>
 
-<p class="LP">since it is both short and uses a common type. However</p>
+<p class="LP">よりも明瞭だ。しかし、</p>
 
 <pre><code>class ConcurrentPool[K, V] {
   type Queue = ConcurrentLinkedQueue[V]
@@ -420,19 +395,19 @@ IntMaker
 }
 </code></pre>
 
-<p class="LP">is helpful since it communicates purpose and enhances brevity.</p>
+<p class="LP">は、意思疎通が目的で、簡潔さを高めたい場合に有用だ。</p>
 
-<p>Don&rsquo;t use subclassing when an alias will do.</p>
+<p>エイリアスが使える場合は、サブクラスを使ってはいけない。</p>
 
 <pre><code>trait SocketFactory extends (SocketAddress) =&gt; Socket
 </code></pre>
 
-<p class="LP">a <code>SocketFactory</code> <em>is</em> a function that produces a <code>Socket</code>. Using a type alias</p>
+<p class="LP"><code>SocketFactory</code>は、<code>Socket</code>を生成する<em>関数</em>だ。型エイリアス</p>
 
 <pre><code>type SocketFactory = SocketAddress =&gt; Socket
 </code></pre>
 
-<p class="LP">is better. We may now provide function literals for values of type <code>SocketFactory</code> and also use function composition:</p>
+<p class="LP">を使う方がいい。今や、<code>SocketFactory</code>型の値のための関数リテラルが与えられているので、関数合成を使うことができる:</p>
 
 <pre><code>val addrToInet: SocketAddress =&gt; Long
 val inetToSocket: Long =&gt; Socket
@@ -440,7 +415,7 @@ val inetToSocket: Long =&gt; Socket
 val factory: SocketFactory = addrToInet andThen inetToSocket
 </code></pre>
 
-<p>Type aliases are bound to toplevel names by using package objects:</p>
+<p>パッケージオブジェクトを使うと、型エイリアスをトップレベル名に結びつけられる:</p>
 
 <pre><code>package com.twitter
 package object net {
@@ -448,34 +423,25 @@ package object net {
 }
 </code></pre>
 
-<p>Note that type aliases are not new types &mdash; they are equivalent to
-the syntactically substituting the aliased name for its type.</p>
+<p>なお、型エイリアスは、型に対する別名の構文的な代わりとなるものであり、新しい型ではないことに留意しよう。</p>
 
-<p><a id="Types and Generics-Implicits" /></p>
+<p><a id="型とジェネリクス-暗黙" /></p>
 
-<h3>Implicits</h3>
+<h3>暗黙</h3>
 
-<p>Implicits are a powerful type system feature, but they should be used
-sparingly. They have complicated resolution rules and make it
-difficult &mdash; by simple lexical examination &mdash; to grasp what is actually
-happening. It&rsquo;s definitely OK to use implicits in the following
-situations:</p>
+<p>暗黙(implicits)は、型システムの強力な機能だが、慎重に使うべきだ。それらの解決ルールは複雑で、シンプルな字句検査においてさえ、実際に何が起きているか把握するのを困難にする。暗黙を間違いなく使ってもいいのは、以下の場面だ:</p>
 
 <ul>
-<li>Extending or adding a Scala-style collection</li>
-<li>Adapting or extending an object (&ldquo;pimp my library&rdquo; pattern)</li>
-<li>Use to <em>enhance type safety</em> by providing constraint evidence</li>
-<li>To provide type evidence (typeclassing)</li>
-<li>For <code>Manifest</code>s</li>
+<li>Scalaスタイルのコレクションを拡張したり、追加したりするとき</li>
+<li>オブジェクトを適合(adapt)させたり、拡張したりするとき（&ldquo;pimp my library&rdquo;パターン）</li>
+<li>制約エビデンスを提供することで、<em>型安全を強化</em>するために使うとき</li>
+<li>型エビデンス（型クラス）を提供するため</li>
+<li><code>Manifest</code>のため</li>
 </ul>
 
-<p>If you do find yourself using implicits, always ask yourself if there is
-a way to achieve the same thing without their help.</p>
+<p>暗黙を使う場合は、暗黙を使わずに同じことを達成する方法がないか、常に自問自答しよう。</p>
 
-<p>Do not use implicits to do automatic conversions between similar
-datatypes (for example, converting a list to a stream); these are
-better done explicitly because the types have different semantics, and
-the reader should beware of these implications.</p>
+<p>似通ったデータ型同士を、自動的に変換するのに暗黙を使うのはやめよう（例えば、リストをストリームに変換する等）。型はそれぞれ異なった動作をするので、読み手は、暗黙によって型が変換されていないか気をつける必要がある。明示的に変換するべきだ。</p>
 
 <p><a id="Collections" /></p>
 
