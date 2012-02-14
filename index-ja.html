@@ -123,7 +123,7 @@
 <li><strong><a href="#序章">序章</a></strong></li>
 <li><strong><a href="#整形">整形</a></strong>: <em><a href="#整形-ホワイトスペース">ホワイトスペース</a></em>, <em><a href="#整形-命名">命名</a></em>, <em><a href="#整形-インポート">インポート</a></em>, <em><a href="#整形-中カッコ">中カッコ</a></em>, <em><a href="#整形-パターンマッチ">パターンマッチ</a></em>, <em><a href="#整形-コメント">コメント</a></em></li>
 <li><strong><a href="#型とジェネリクス">型とジェネリクス</a></strong>: <em><a href="#型とジェネリクス-戻り型アノテーション">戻り型アノテーション</a></em>, <em><a href="#型とジェネリクス-変位">変位</a></em>, <em><a href="#型とジェネリクス-型エイリアス">型エイリアス</a></em>, <em><a href="#型とジェネリクス-暗黙">暗黙</a></em></li>
-<li><strong><a href="#コレクション">コレクション</a></strong>: <em><a href="#コレクション-階層">階層</a></em>, <em><a href="#コレクション-利用">利用</a></em>, <em><a href="#コレクション-スタイル">スタイル</a></em>, <em><a href="#コレクション-Performance">Performance</a></em>, <em><a href="#コレクション-Java Collections">Java Collections</a></em></li>
+<li><strong><a href="#コレクション">コレクション</a></strong>: <em><a href="#コレクション-階層">階層</a></em>, <em><a href="#コレクション-利用">利用</a></em>, <em><a href="#コレクション-スタイル">スタイル</a></em>, <em><a href="#コレクション-性能">性能</a></em>, <em><a href="#コレクション-Javaコレクション">Javaコレクション</a></em></li>
 <li><strong><a href="#Concurrency">Concurrency</a></strong>: <em><a href="#Concurrency-Futures">Futures</a></em>, <em><a href="#Concurrency-Collections">Collections</a></em></li>
 <li><strong><a href="#Control structures">Control structures</a></strong>: <em><a href="#Control structures-Recursion">Recursion</a></em>, <em><a href="#Control structures-Returns">Returns</a></em>, <em><a href="#Control structures-`for` loops and comprehensions"><code>for</code> loops and comprehensions</a></em>, <em><a href="#Control structures-`require` and `assert`"><code>require</code> and <code>assert</code></a></em></li>
 <li><strong><a href="#Functional programming">Functional programming</a></strong>: <em><a href="#Functional programming-Case classes as algebraic data types">Case classes as algebraic data types</a></em>, <em><a href="#Functional programming-Options">Options</a></em>, <em><a href="#Functional programming-Pattern matching">Pattern matching</a></em>, <em><a href="#Functional programming-Partial functions">Partial functions</a></em>, <em><a href="#Functional programming-Destructuring bindings">Destructuring bindings</a></em>, <em><a href="#Functional programming-Lazyness">Lazyness</a></em>, <em><a href="#Functional programming-Call by name">Call by name</a></em>, <em><a href="#Functional programming-`flatMap`"><code>flatMap</code></a></em></li>
@@ -144,9 +144,9 @@
 
 <p><a href="http://www.scala-lang.org/">Scala</a>は、Twitterで使われている主なアプリケーションプログラミング言語の一つだ。TwitterのインフラのほとんどはScalaで書かれているし、我々の業務を支える<a href="http://github.com/twitter/">大規模ライブラリ</a>をいくつか持っている。Scalaは極めて効率的だが、一方で大きな言語でもある。我々の経験上、Scalaの適用には細心の注意が必要だ。Scalaの落とし穴は何か？ どの機能を採用し、どれを避けるべきか？ いつ&ldquo;純粋関数型スタイル&rdquo;を用い、いつ控えるべきか？ つまり、我々が見出した&ldquo;Scalaの効果的(effective)な使い方&rdquo;とは何か？ このガイドは、我々の経験を抽出し、一連の<em>ベストプラクティス</em>を提供する小論文にまとめようとするものだ。Twitterは、Scalaを、主に分散システムを構成する大容量サービスの作成に利用している。だから、我々の助言にはバイアスがかかっている。しかし、ここにあるアドバイスのほとんどは、他の問題領域へも自然に置き換えることができるはずだ。これは法律じゃない、だから逸脱は正当化されるべきだ。</p>
 
-<p>Scalaは、簡潔な表現を可能にする数多くのツールを提供している。タイピングが少なければ、読む量も少なくなり、読む量が少なくなれば、大抵はより早く読める。故に、簡潔さは明瞭さを高める。しかし、簡潔さはまた、正反対の効果をもたらす使い勝手の悪い道具ともなりえる。正確さに続いて、いつも読み手のことを考えよう。</p>
+<p>Scalaは、簡潔な表現を可能にする数多くのツールを提供している。タイピングが少なければ、読む量も少なくなり、読む量が少なくなれば、大抵はより早く読める。故に、簡潔さは明瞭さを高める。しかし、簡潔さはまた、正反対の効果をもたらす使い勝手の悪い道具ともなりえる。正確さの次に、いつも読み手のことを考えよう。</p>
 
-<p>何よりも、<em>Scalaでプログラムするのだ</em>。君が書いているのはJavaではないし、Haskellでも、Pythonでもない。Scalaのプログラムは、それらのうちのいずれの言語で書かれたものとも違っている。Scalaを効果的に使うには、君の問題をScalaの用語で表現しなければならない。Javaのプログラムを、無理矢理にScalaになおしても仕方がない。ほとんどのやり方では、それはオリジナルより劣ったものになるだろう。</p>
+<p>何よりも、<em>Scalaでプログラムするのだ</em>。君が書いているのはJavaではないし、Haskellでも、Pythonでもない。Scalaのプログラムは、それらのうちのいずれの言語で書かれたものとも違っている。Scalaを効果的に使うには、君の問題をScalaの用語で表現しなければならない。Javaのプログラムを、無理矢理にScalaになおしても仕方がない。ほとんどのやり方で、それはオリジナルより劣ったものになるだろう。</p>
 
 <p>これは、Scalaの入門じゃない。読者は、Scalaに慣れ親しんでいることを前提としている。これからScalaを学びたい人は、以下のサイトを参照するといいだろう:</p>
 
@@ -156,7 +156,7 @@
 <li><a href="http://matt.might.net/articles/learning-scala-in-small-bites/">Learning Scala in Small Bites</a></li>
 </ul>
 
-<p>このガイドは生きたドキュメントであり、現在の「ベストプラクティス」が反映されていく。けれども、核となるアイデアは変わらない。常に可読性を優先せよ。一般的なコードを書き、しかし明瞭さを犠牲にするな。シンプルな言語機能を利用せよ。それは偉大な力を与え、難解さを防ぐ（型システムでは特に）。とりわけ、トレードオフを常に意識すべきだ。洗練された言語は複雑な実装を必要とし、複雑さは複雑さを生む。それは推論において、動作において、機能間の相互作用において、そして、君の協力者を理解する上で。つまり、複雑さは洗練の税金なのだ。効用がコストを上回っていることを、常に確認しなければいけない。</p>
+<p>このガイドは生きたドキュメントであり、現在の「ベストプラクティス」が反映されていく。けれども、核となるアイデアは変わらない。常に可読性を優先せよ。ジェネリックなコードを書き、しかし明瞭さを犠牲にするな。シンプルな言語機能を利用せよ。それは偉大な力を与え、難解さを防ぐ（型システムでは特に）。とりわけ、トレードオフを常に意識すべきだ。洗練された言語は複雑な実装を必要とし、判断や、動作や、機能間の相互作用や、そして君の協力者に対する理解を困難にする。つまり、複雑さは洗練の税金なのだ。効用がコストを上回っていることを、常に確認しなければいけない。</p>
 
 <p>では、楽しんでほしい。</p>
 
@@ -292,7 +292,7 @@ import concurrent</code></pre>のようには書かず、以下のように曖�
 
 <p>アスキーアートや視覚的な装飾に頼ってはいけない。また、APIではない不必要なコメントをドキュメント化してはいけない。もし、自分のコードの挙動を説明するためにコメントを追加しているのに気づいたら、まずは、それが何をするコードなのか明白になるよう書き直せないか考え直してみよう。「見るからに、それは動作する (it works, obviously)」よりも「明らかにそれは動作する(obviously it works)」方が良い（ホーアには申し訳ないけど）。</p>
 
-<p>（訳注: <a href="http://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%B3%E3%83%88%E3%83%8B%E3%83%BC%E3%83%BB%E3%83%9B%E3%83%BC%E3%82%A2">アントニー・ホーア</a>は、自身のチューリング賞受賞講演の中で、「極めて複雑に設計して<em>明らかな</em>欠陥を無くすより、非常に簡素に設計して<em>明らかに</em>欠陥が無いようにする方が遥かに難しい」という趣旨の発言をしている。「コードから実装の意図を一目瞭然に読み取れるようにせよ」という主張は、上記のホーアの主張の真逆を言っている、ということだろう。）</p>
+<p>（訳注: <a href="http://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%B3%E3%83%88%E3%83%8B%E3%83%BC%E3%83%BB%E3%83%9B%E3%83%BC%E3%82%A2">アントニー・ホーア</a>は、自身のチューリング賞受賞講演の中で、<em>『極めて複雑に設計して「明らかな」欠陥を無くすより、非常に簡素に設計して「明らかに」欠陥が無いようにする方が遥かに難しい』</em>という趣旨の発言をしている。「コードから実装の意図を一目瞭然に読み取れるようにせよ」という主張は、上記のホーアの主張の真逆を言っている、ということだろう。）</p>
 
 <p><a id="型とジェネリクス" /></p>
 
@@ -441,9 +441,9 @@ package object net {
 <li><code>Manifest</code>のため</li>
 </ul>
 
-<p>暗黙を使う場合は、暗黙を使わずに同じことを達成する方法がないか、常に自問自答しよう。</p>
+<p>暗黙を使う場合は、暗黙を使わずに同じことを達成する方法がないか、常に確認しよう。</p>
 
-<p>似通ったデータ型同士を、自動的に変換するのに暗黙を使うのはやめよう（例えば、リストをストリームに変換する等）。型はそれぞれ異なった動作をするので、読み手は、暗黙によって型が変換されていないか気をつける必要がある。明示的に変換するべきだ。</p>
+<p>似通ったデータ型同士を、自動的に変換するのに暗黙を使うのはやめよう（例えば、リストをストリームに変換する等）。型はそれぞれ異なった動作をするので、暗黙に型が変換されていないか、読み手に気を使わせることになる。明示的に変換するべきだ。</p>
 
 <p><a id="コレクション" /></p>
 
@@ -484,7 +484,7 @@ val set = Set(1, 2, 3)
 val map = Map(1 -&gt; &quot;one&quot;, 2 -&gt; &quot;two&quot;, 3 -&gt; &quot;three&quot;)
 </code></pre>
 
-<p class="LP">このスタイルでは、コレクションの動作をその実装と切り離して、最も適切な型をコレクションライブラリに使わせることができる。君に必要なのは<code>Map</code>であって、必ずしも[赤黒木](http://ja.wikipedia.org/wiki/%E8%B5%A4%E9%BB%92%E6%9C%A8)じゃない。さらに、これらのデフォルトコンストラクタは、しばしば特殊な表現を用いる。例えば<code>Map()</code>は、3つのフィールド・オブジェクトから、3つのキーを持つマップを作り出す。</p>
+<p class="LP">このスタイルでは、コレクションの動作がその実装と切り離されているので、コレクションライブラリは最も適切な実装型を使うことができる。君が必要としているのは<code>Map</code>であって、必ずしも赤黒木じゃない。さらに、これらのデフォルトコンストラクタは、しばしば特殊化した表現を用いる。例えば<code>Map()</code>は、3つのキーを持つマップに対して、3つのフィールドを持つオブジェクトを使う（訳注: [Map3](http://www.scala-lang.org/api/current/scala/collection/immutable/Map$$Map3.html)クラスのこと）。</p>
 
 <p>以上からの結論として、メソッドやコンストラクタでは、<em>最も総称的なコレクション型を適切に受け取ろう</em>。これは詰まるところ、通常は上記の<code>Iterable</code>、<code>Seq</code>、<code>Set</code>あるいは<code>Map</code>のうち、どれか一つである。もしメソッドがシーケンスを必要とする場合は、<code>List[T]</code>ではなく<code>Seq[T]</code>を使おう。</p>
 
@@ -497,7 +497,7 @@ anything about streams?
 
 <h3>スタイル</h3>
 
-<p>関数型プログラミングは、不変コレクションをパイプライン方式で、望みの結果へと変換する手法を推奨している。大抵は、これにより問題をとても簡潔に解決できるが、同時に読み手を困惑させることもある。つまり、しばしば作者の意図を理解するのが困難になるので、暗黙的にしか示されていない途中結果を全て追跡する羽目になる。例えば、様々なプログラミング言語に対する投票結果である (language, num votes) のシーケンスを集計して、票数の最も多い言語から順番に表示するコードは、以下のように書ける:</p>
+<p>関数型プログラミングでは、不変コレクションを望みの結果へと変形する方法として、パイプライン化された変換が推奨されている。大抵は、この手法により問題をとても簡潔に解決できるが、同時に読み手を困惑させることもある。変換をパイプライン化すると、しばしば作者の意図を理解するのが困難になり、暗黙的にしか示されていない途中結果を、全て追跡し続けるしかなくなるからだ。例えば、様々なプログラミング言語に対する投票結果である (language, num votes) のシーケンスを集計して、票数の最も多い言語から順番に表示するコードは、以下のように書ける:</p>
 
 <pre><code>val votes = Seq((&quot;scala&quot;, 1), (&quot;java&quot;, 4), (&quot;scala&quot;, 10), (&quot;scala&quot;, 1), (&quot;python&quot;, 10))
 val orderedVotes = votes
@@ -509,7 +509,7 @@ val orderedVotes = votes
   .reverse
 </code></pre>
 
-<p class="LP">このコードは、簡潔でかつ正しい。しかし、ほとんど全ての読み手は、作者の元の意図を把握するのに苦労するだろう。<em>途中結果とパラメータに名前を付ける</em>のは、作者の意図をはっきりさせるのに大抵役立つ戦略の一つだ:</p>
+<p class="LP">このコードは、簡潔でかつ正しい。しかし、ほとんどの読み手は、作者の元の意図を把握するのに苦労するだろう。<em>途中結果とパラメータに名前を付ける</em>のは、多くの場合で、作者の意図をハッキリさせるのに役立つ戦略の一つだ:</p>
 
 <pre><code>val votesByLang = votes groupBy { case (lang, _) =&gt; lang }
 val sumByLang = votesByLang map { case (lang, counts) =&gt;
@@ -521,7 +521,7 @@ val orderedVotes = sumByLang.toSeq
   .reverse
 </code></pre>
 
-<p class="LP">このコードでは、施される変換の種類を中間値に命名し、操作されるデータ構造をパラメータに名付けている。これにより、以前と同じくらい簡潔であるだけでなく、作者の意図の表現がいっそう明瞭になった。もし、このスタイルを使うことで名前区間の汚染が心配なら、式を<code>{}</code>でグループ化すると良い:</p>
+<p class="LP">このコードでは、施される変換を中間値の名前に、操作されるデータ構造をパラメータ名にしている。これにより、以前と同じくらい簡潔であるだけでなく、作者の意図がよりいっそう明瞭に表現されている。もし、このスタイルを使うことで名前空間の汚染が心配なら、式を<code>{}</code>でグループ化すると良い:</p>
 
 <pre><code>val orderedVotes = {
   val votesByLang = ...
@@ -529,49 +529,23 @@ val orderedVotes = sumByLang.toSeq
 }
 </code></pre>
 
-<p><a id="コレクション-Performance" /></p>
+<p><a id="コレクション-性能" /></p>
 
-<h3>Performance</h3>
+<h3>性能</h3>
 
-<p>High level collections libraries (as with higher level constructs
-generally) make reasoning about performance more difficult: the
-further you stray from instructing the computer directly &mdash; in other
-words, imperative style &mdash; the harder it is to predict the exact
-performance implications of a piece of code. Reasoning about
-correctness however, is typically easier; readability is also
-enhanced. With Scala the picture is further complicated by the Java
-runtime; Scala hides boxing/unboxing operations from you, which can
-incur severe performance or space penalties.</p>
+<p>高水準コレクションライブラリは、（高水準な構築物が一般的にそうであるように）性能の推測が難しい。コンピュータに直接指示するやり方、つまり命令型スタイルから遠ざかるほど、あるコード片が性能に与える影響を厳密に予測するのは困難になる。一方で、正確さを判断することは概して容易だし、読みやすさも向上する。Scalaの場合、Javaランタイムが事態をさらに複雑にしている。Scalaでは、ボクシング操作やアンボクシング操作がユーザから隠されており、性能やメモリ使用量の面で重大なペナルティを被ることがある。</p>
 
-<p>Before focusing on low level details, make sure you are using a
-collection appropriate for your use. Make sure your datastructure
-doesn&rsquo;t have unexpected asymptotic complexity. The complexities of the
-various Scala collections are described
-<a href="http://www.scala-lang.org/docu/files/collections-api/collections_40.html">here</a>.</p>
+<p>低レベルの詳細に焦点を当てる前に、君のコレクションの使い方が適切かどうか確認しよう。また、データ構造に予期しない漸近的な複雑さがないか確かめよう。Scalaのさまざまなコレクションの複雑さについては、<a href="http://www.scala-lang.org/docu/files/collections-api/collections_40.html">こちら</a>で述べられている。</p>
 
-<p>The first rule of optimizing for performance is to understand <em>why</em>
-your application is slow. Do not operate without data;
-profile<a class="noteref" id="fnref1" href="#fn1" title="Jump to note 1">[1]</a> your
-application before proceeding. Focus first on hot loops and large data
-structures. Excessive focus on optimization is typically wasted
-effort. Remember Knuth&rsquo;s maxim: &ldquo;Premature optimisation is the root of
-all evil.&rdquo;</p>
+<p>性能最適化の第一法則は、君のアプリケーションが<em>なぜ</em>遅いのかを理解することだ。最適化を始める前に、君のアプリケーションをプロファイル<a class="noteref" id="fnref1" href="#fn1" title="Jump to note 1">[1]</a>してデータを取ろう。最初に注目するのは、回数の多いループや巨大なデータ構造だ。最適化への過度な取り組みは、たいてい無駄な努力に終わる。クヌースの「時期尚早な最適化は諸悪の根源」という格言を思い出そう。</p>
 
-<p>It is often approriate to use lower level collections in situations
-that require better performance or space efficiency. Use arrays
-instead of lists for large sequences (the immutable <code>Vector</code>
-collections provides a referentially transparent interface to arrays);
-and use buffers instead of direct sequence construction when
-performance matters.</p>
+<p>性能やメモリ使用効率の良さが要求される場面では、多くの場合、低レベルコレクションを使うのが妥当だ。巨大なシーケンスには、リストより配列を使おう（不変の<code>Vector</code>コレクションは、配列への参照透過なインタフェースを提供する）。また、性能が重要な場合は、シーケンスを直接生成せずにバッファを使おう。</p>
 
-<p><a id="コレクション-Java Collections" /></p>
+<p><a id="コレクション-Javaコレクション" /></p>
 
-<h3>Java Collections</h3>
+<h3>Javaコレクション</h3>
 
-<p>Use <code>scala.collection.JavaConverters</code> to interoperate with Java collections.
-These are a set of implicits that add conversion <code>asJava</code> and <code>asScala</code> conversion
-methods. The use of these ensures that such conversions are explicit, aiding
-the reader:</p>
+<p>Javaコレクションとの相互運用のために、<code>scala.collection.JavaConverters</code>を使おう。<code>JavaConverters</code>は、暗黙変換を行う<code>asJava</code>メソッドと<code>asScala</code>メソッドを追加する。読み手を助けるために、これらの変換は明示的に行うようにしよう:</p>
 
 <pre><code>import scala.collection.JavaConverters._
 
@@ -1658,7 +1632,7 @@ guidance and many excellent suggestions.</p>
 <ol id="notes">
 
 <li id="fn1">
-<a href="http://yourkit.com">Yourkit</a> is a good profiler <a href="#fnref1" title="Jump back to reference">[back]</a></li>
+<a href="http://yourkit.com">Yourkit</a>は良いプロファイラだ。 <a href="#fnref1" title="Jump back to reference">[back]</a></li>
 <li id="fn2">
 From <a href="https://github.com/twitter/finagle/blob/master/finagle-core/src/main/scala/com/twitter/finagle/loadbalancer/Heap.scala#L41">Finagle&rsquo;s heap
 balancer</a> <a href="#fnref2" title="Jump back to reference">[back]</a></li>
