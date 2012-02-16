@@ -115,7 +115,7 @@
 
 <h1 class="header">Effective Scala</h1>
 
-<address>Marius Eriksen, Twitter Inc.<br />marius@twitter.com (<a href="http://twitter.com/marius">@marius</a>)<br /><br />[translated by Yuta Okamoto (<a href="http://twitter.com/okapies">@okapies</a>)]</address>
+<address>Marius Eriksen, Twitter Inc.<br />marius@twitter.com (<a href="http://twitter.com/marius">@marius</a>)<br /><br />[translated by Yuta Okamoto(<a href="http://github.com/okapies">@okapies</a>) and Satoshi Kobayashi(<a href="https://github.com/scova0731">@scova0731</a>)]</address>
 
 <h2>Table of Contents</h2>
 
@@ -124,12 +124,12 @@
 <li><strong><a href="#整形">整形</a></strong>: <em><a href="#整形-ホワイトスペース">ホワイトスペース</a></em>, <em><a href="#整形-命名">命名</a></em>, <em><a href="#整形-インポート">インポート</a></em>, <em><a href="#整形-中カッコ">中カッコ</a></em>, <em><a href="#整形-パターンマッチ">パターンマッチ</a></em>, <em><a href="#整形-コメント">コメント</a></em></li>
 <li><strong><a href="#型とジェネリクス">型とジェネリクス</a></strong>: <em><a href="#型とジェネリクス-戻り型アノテーション">戻り型アノテーション</a></em>, <em><a href="#型とジェネリクス-変位">変位</a></em>, <em><a href="#型とジェネリクス-型エイリアス">型エイリアス</a></em>, <em><a href="#型とジェネリクス-暗黙">暗黙</a></em></li>
 <li><strong><a href="#コレクション">コレクション</a></strong>: <em><a href="#コレクション-階層">階層</a></em>, <em><a href="#コレクション-利用">利用</a></em>, <em><a href="#コレクション-スタイル">スタイル</a></em>, <em><a href="#コレクション-性能">性能</a></em>, <em><a href="#コレクション-Javaコレクション">Javaコレクション</a></em></li>
-<li><strong><a href="#Concurrency">Concurrency</a></strong>: <em><a href="#Concurrency-Futures">Futures</a></em>, <em><a href="#Concurrency-Collections">Collections</a></em></li>
+<li><strong><a href="#並行性">並行性</a></strong>: <em><a href="#並行性-Futures">Futures</a></em>, <em><a href="#並行性-Collections">Collections</a></em></li>
 <li><strong><a href="#Control structures">Control structures</a></strong>: <em><a href="#Control structures-Recursion">Recursion</a></em>, <em><a href="#Control structures-Returns">Returns</a></em>, <em><a href="#Control structures-`for` loops and comprehensions"><code>for</code> loops and comprehensions</a></em>, <em><a href="#Control structures-`require` and `assert`"><code>require</code> and <code>assert</code></a></em></li>
 <li><strong><a href="#Functional programming">Functional programming</a></strong>: <em><a href="#Functional programming-Case classes as algebraic data types">Case classes as algebraic data types</a></em>, <em><a href="#Functional programming-Options">Options</a></em>, <em><a href="#Functional programming-Pattern matching">Pattern matching</a></em>, <em><a href="#Functional programming-Partial functions">Partial functions</a></em>, <em><a href="#Functional programming-Destructuring bindings">Destructuring bindings</a></em>, <em><a href="#Functional programming-Lazyness">Lazyness</a></em>, <em><a href="#Functional programming-Call by name">Call by name</a></em>, <em><a href="#Functional programming-`flatMap`"><code>flatMap</code></a></em></li>
-<li><strong><a href="#Object oriented programming">Object oriented programming</a></strong>: <em><a href="#Object oriented programming-Dependency injection">Dependency injection</a></em>, <em><a href="#Object oriented programming-Traits">Traits</a></em>, <em><a href="#Object oriented programming-Visibility">Visibility</a></em>, <em><a href="#Object oriented programming-Structural typing">Structural typing</a></em></li>
-<li><strong><a href="#Garbage collection">Garbage collection</a></strong></li>
-<li><strong><a href="#Java compatibility">Java compatibility</a></strong></li>
+<li><strong><a href="#オブジェクト指向プログラミング">オブジェクト指向プログラミング</a></strong>: <em><a href="#オブジェクト指向プログラミング-依存性注入">依存性注入</a></em>, <em><a href="#オブジェクト指向プログラミング-トレイト">トレイト</a></em>, <em><a href="#オブジェクト指向プログラミング-可視性">可視性</a></em>, <em><a href="#オブジェクト指向プログラミング-構造的型(？正確な訳？)">構造的型(？正確な訳？)</a></em></li>
+<li><strong><a href="#ガベージコレクション">ガベージコレクション</a></strong></li>
+<li><strong><a href="#Java 互換性">Java 互換性</a></strong></li>
 <li><strong><a href="#Twitter's standard libraries">Twitter&rsquo;s standard libraries</a></strong>: <em><a href="#Twitter's standard libraries-Futures">Futures</a></em></li>
 <li><strong><a href="#Acknowledgments">Acknowledgments</a></strong></li>
 </ul>
@@ -553,40 +553,21 @@ val list: java.util.List[Int] = Seq(1,2,3,4).asJava
 val buffer: scala.collection.mutable.Buffer[Int] = list.asScala
 </code></pre>
 
-<p><a id="Concurrency" /></p>
+<p><a id="並行性" /></p>
 
-<h2>Concurrency</h2>
+<h2>並行性</h2>
 
-<p>Modern services are highly concurrent &mdash; it is common for servers to
-coordinate 10s&ndash;100s of thousands of simultaneous operations &mdash; and
-handling the implied complexity is a central theme in authoring robust
-systems software.</p>
+<p>現代のサービスは、サーバへの何万何十万もの同時操作を調整するため、高い並行性を備えている。そして、隠れた複雑性への対処は、堅固なシステムソフトウェアを記述する上で中心的なテーマだ。</p>
 
-<p><em>Threads</em> provide a means of expressing concurrency: they give you
-independent, heap-sharing execution contexts that are scheduled by the
-operating system. However, thread creation is expensive in Java and is
-a resource that must be managed, typically with the use of pools. This
-creates additional complexity for the programmer, and also a high
-degree of coupling: it&rsquo;s difficult to divorce application logic from
-their use of the underlying resources.</p>
+<p><em>スレッド</em>は、並行性を表現する一つの手段だ。スレッドからは、OSがスケジュールする、ヒープを共有する独立した実行コンテクストを利用できる。しかし、Javaにおいてスレッド生成はコストが高い。そのため、主にスレッドプールを使って、リソースとして管理する必要がある。これは、プログラマにとってさらなる複雑さを生み出す。また、アプリケーションロジックとそれが使用する潜在的なリソースを分離するのが難しくなり、結合度を高めてしまう。</p>
 
-<p>This complexity is especially apparent when creating services that
-have a high degree of fan-out: each incoming request results in a
-multitude of requests to yet another tier of systems. In these
-systems, thread pools must be managed so that they are balanced
-according to the ratios of requests in each tier: mismanagement of one
-thread pool bleeds into another. </p>
+<p>この複雑さは、出力の大きいサービスの製作において、とりわけ明らかになる。それぞれの受信リクエストからは、システムのまた別の階層に対する多数のリクエストが生じる。それらのシステムにおいて、スレッドプールは、各階層でのリクエストの割合によってバランスするよう管理されなきゃならない。あるスレッドプールで管理に失敗すると、その影響は他のスレッドプールにも広がってしまう。</p>
 
-<p>Robust systems must also consider timeouts and cancellation, both of
-which require the introduction of yet more &ldquo;control&rdquo; threads,
-complicating the problem further. Note that if threads were cheap
-these problems would be diminished: no pooling would be required,
-timed out threads could be discarded, and no additional resource
-management would be required.</p>
+<p>また、堅固なシステムは、タイムアウトとキャンセルについても検討する必要がある。どちらに対処するにも、さらなる「制御スレッド」の導入が必要で、そのことが問題をさらに複雑にする。ちなみに、もしスレッドのコストが安いなら、こうした問題は少なくなる。なぜなら、スレッドプールが必要とされず、タイムアウトスレッドを切り捨てることができ、追加のリソース管理も必要ないからだ。</p>
 
-<p>Thus resource management compromises modularity.</p>
+<p>このように、リソース管理はモジュール性を危うくするのだ。</p>
 
-<p><a id="Concurrency-Futures" /></p>
+<p><a id="並行性-Futures" /></p>
 
 <h3>Futures</h3>
 
@@ -659,7 +640,7 @@ less error prone, and also reads better.</p>
 <code>Future.collect</code> codify common patterns when operating over
 multiple futures that should be combined.</p>
 
-<p><a id="Concurrency-Collections" /></p>
+<p><a id="並行性-Collections" /></p>
 
 <h3>Collections</h3>
 
@@ -1217,198 +1198,146 @@ val addr: Option[InetSocketAddress] =
 <p>The use of <code>flatMap</code> in <code>Future</code>s is discussed in the
 <a href="#Twitter's%20standard%20libraries-Futures">futures section</a>.</p>
 
-<p><a id="Object oriented programming" /></p>
+<p><a id="オブジェクト指向プログラミング" /></p>
 
-<h2>Object oriented programming</h2>
+<h2>オブジェクト指向プログラミング</h2>
 
-<p>Much of Scala&rsquo;s vastness lie in its object system. Scala is a <em>pure</em>
-language in the sense that <em>all values</em> are objects; there is no
-distinction between primitive types and composite ones.
-Scala also features mixins allowing for more orthogonal and piecemeal
-construction of modules that can be flexibly put together at compile
-time with all the benefits of static type checking.</p>
+<p>Scala の広大さの多くはオブジェクト機構にある。Scala は、<em>すべての値が</em>オブジェクトであるという意味で、<em>純粋な</em> 言語である。プリミティブな型と混合型の間に違いはない。 Scala はミックスインの機能もあり、静的型チェックの利益をすべて享受しつつ、もっと直行して別々なモジュールをコンパイル時に柔軟に一緒に組立てができる。</p>
 
-<p>A motivation behind the mixin system was to obviate the need for
-traditional dependency injection. The culmination of this &ldquo;component
-style&rdquo; of programming is <a href="http://jboner.github.com/2008/10/06/real-world-scala-dependency-injection-di.html">the cake
-pattern</a>.</p>
+<p>ミックスイン機構の背景ある動機は、伝統的な依存性注入の必要性を不要にするためにある。その&ldquo;コンポーネントスタイル&rdquo;のプログラミングの最高点は、<a href="http://jboner.github.com/2008/10/06/real-world-scala-dependency-injection-di.html"> Cake
+パターン</a> である。</p>
 
-<p><a id="Object oriented programming-Dependency injection" /></p>
+<p><a id="オブジェクト指向プログラミング-依存性注入" /></p>
 
-<h3>Dependency injection</h3>
+<h3>依存性注入</h3>
 
-<p>In our use, however, we&rsquo;ve found that Scala itself removes so much of
-the syntactical overhead of &ldquo;classic&rdquo; (constructor) dependency
-injection that we&rsquo;d rather just use that: it is clearer, the
-dependencies are still encoded in the (constructor) type, and class
-construction is so syntactically trivial that it becomes a breeze.
-It&rsquo;s boring and simple and it works. <em>Use dependency injection for
-program modularization</em>, and in particular, <em>prefer composition over
-inheritance</em> &mdash; for this leads to more modular and testable programs.
-When encountering a situation requiring inheritance, ask yourself: how
-you structure the program if the language lacked support for
-inheritance? The answer may be compelling.</p>
+<p>私たちの利用では、しかし、Scala それ自身が、”クラシックな”(コンストラクタによる)依存性注入の多くの構文上のオーバーヘッドは、むしろそれを使う。それはより明快であり、依存性は(コンストラクタの)型でまだエンコードされ、クラスの組立は、とても構文的に些細であり、そよ風くらいになる。</p>
 
-<p>Dependency injection typically makes use of traits,</p>
+<p>それは退屈でシンプルだが動作する。<em>プログラムのモジュール化のために依存性注入を使うこと</em>。特に、<em>継承より合成を選択すること</em> 。 これにより、もっとモジュール化が進みテスト可能なプログラムになる。継承が必要な状況に遭遇した時、自分自身に問うのだ：もし言語が継承をサポートしていなかったら、どのように構造化するだろう、と。この答えは強いることができるかもしれない。</p>
 
-<pre><code>trait TweetStream {
-  def subscribe(f: Tweet =&gt; Unit)
-}
-class HosebirdStream extends TweetStream ...
-class FileStream extends TweetStream ..
+<p>依存性注入は典型的にはトレイトを利用する。</p>
 
-class TweetCounter(stream: TweetStream) {
-  stream.subscribe { tweet =&gt; count += 1 }
-}
+<pre><code> trait TweetStream {
+   def subscribe(f: Tweet =&gt; Unit)
+ }
+ class HosebirdStream extends TweetStream ...
+ class FileStream extends TweetStream ..
+
+ class TweetCounter(stream: TweetStream) {
+   stream.subscribe { tweet =&gt; count += 1 }
+ }
 </code></pre>
 
-<p>It is common to inject <em>factories</em> &mdash; objects that produce other
-objects. In these cases, favor the use of simple functions over specialized
-factory types.</p>
+<p><em>ファクトリー</em>(オブジェクトを生成するオブジェクト)を注入することは一般的である。これら(下記のような？？)のケースでは、特化したファクトリー型よりはシンプルな関数の利用を好むようにする。</p>
 
-<pre><code>class FilteredTweetCounter(mkStream: Filter =&gt; TweetStream) {
-  mkStream(PublicTweets).subscribe { tweet =&gt; publicCount += 1 }
-  mkStream(DMs).subscribe { tweet =&gt; dmCount += 1 }
-}
+<pre><code> class FilteredTweetCounter(mkStream: Filter =&gt; TweetStream) {
+   mkStream(PublicTweets).subscribe { tweet =&gt; publicCount += 1 }
+   mkStream(DMs).subscribe { tweet =&gt; dmCount += 1 }
+ }
 </code></pre>
 
-<p><a id="Object oriented programming-Traits" /></p>
+<p><a id="オブジェクト指向プログラミング-トレイト" /></p>
 
-<h3>Traits</h3>
+<h3>トレイト</h3>
 
-<p>Dependency injection does not at all preclude the use of common <em>interfaces</em>, or
-the implemention of common code in traits. Quite contrary&mdash; the use of traits are
-highly encouraged for exactly this reason: multiple interfaces
-(traits) may be implemented by a concrete class, and common code can
-be reused across all such classes.</p>
+<p>依存性注入は、一般的な<em>インターフェイス</em>の利用や、トレイトで共通のコードを実装することを妨げるものでは全くない。全く反対なのだが、トレイトの利用は次の理由で強く推奨されている：複数のインターフェイス(トレイト)は、具象クラスで実装されるかもしれないし、共通コードはすべてのそれらのクラス群に横断的に再利用されるかもしれない。</p>
 
-<p>Keep traits short and orthogonal: don&rsquo;t lump separable functionality
-into a trait, think of the smallest related ideas that fit together. For example,
-imagine you have an something that can do IO:</p>
+<p>トレイトは短くて直交するように保つことだ。分割可能な機能をひとつのトレイトの塊にしてしまってはいけない。最も小さな関連するアイデアだけを一緒にすることを考えるようにする。たとえば、IOをする何かを想像してみるといい。</p>
 
-<pre><code>trait IOer {
-  def write(bytes: Array[Byte])
-  def read(n: Int): Array[Byte]
-}
+<pre><code> trait IOer {
+   def write(bytes: Array[Byte])
+   def read(n: Int): Array[Byte]
+ }
 </code></pre>
 
-<p class="LP">separate the two behaviors:</p>
+<p class="LP">これを２つの振る舞いに分離する。</p>
 
-<pre><code>trait Reader {
-  def read(n: Int): Array[Byte]
-}
-trait Writer {
-  def write(bytes: Array[Byte])
-}
+<pre><code> trait Reader {
+   def read(n: Int): Array[Byte]
+ }
+ trait Writer {
+   def write(bytes: Array[Byte])
+ }
 </code></pre>
 
-<p class="LP">and mix them together to form what was an <code>IOer</code>: <code>new Reader with Writer</code>&hellip; Interface minimalism leads to greater orthogonality and cleaner modularization.</p>
+<p class="LP">そして、もともと<code>IOer</code> だったこれらをミックスしてみる: <code>new Reader with Writer</code>&hellip;  インターフェイスの最小化は、よりよい直交性とよりよりモジュール化につながる。</p>
 
-<p><a id="Object oriented programming-Visibility" /></p>
+<p><a id="オブジェクト指向プログラミング-可視性" /></p>
 
-<h3>Visibility</h3>
+<h3>可視性</h3>
 
-<p>Scala has very expressive visibility modifiers. It&rsquo;s important to use
-these as they define what constitutes the <em>public API</em>. Public APIs
-should be limited so users don&rsquo;t inadvertently rely on implementation
-details and limit the author&rsquo;s ability to change them: They are crucial
-to good modularity. As a rule, it&rsquo;s much easier to expand public APIs
-than to contract them. Poor annotations can also compromise backwards
-binary compatibility of your code.</p>
+<p>Scala は非常に表現豊かな可視性の修飾子を持つ。修飾子は、何を<em>公開API</em>として構成するかを定義するのに重要である。公開APIは限定されるべきであり、それにより利用者は不注意に実装の詳細に依存することはなく、また、作者のAPIを変更する力を制限する。このことは、良いモジュール性にとって決定的に重要である。ルールとして、公開APIを拡張することは、彼らと契約するよりもかなり簡単である。貧相なアノテーションは、君のコードの後方バイナリ互換性を汚すこともできるようにもなる。</p>
 
 <h4><code>private[this]</code></h4>
 
-<p>A class member marked <code>private</code>, </p>
+<p><code>private</code> にしたクラスメンバーは、</p>
 
-<pre><code>private val x: Int = ...
+<pre><code> private val x: Int = ...
 </code></pre>
 
-<p class="LP">is visible to all <em>instances</em> of that class (but not their subclasses). In most cases, you want <code>private[this]</code>.</p>
+<p class="LP">そのクラスの(しかし、サブクラスは含まずに)すべての<em>インスタンス</em>から見える。殆どの場合、君は<code>private[this]</code>としたいだろう。</p>
 
-<pre><code>private[this] val: Int = ..
+<pre><code> private[this] val: Int = ..
 </code></pre>
 
-<p class="LP">which limits visibilty to the particular instance. The Scala compiler is also able to translate <code>private[this]</code> into a simple field access (since access is limited to the statically defined class) which can sometimes aid performance optimizations.</p>
+<p class="LP">これは特定のインスタンスに可視性を制限する。Scala コンパイラーは、<code>private[this]</code> を(アクセスが静的に定義されたクラスに限られるから)シンプルなフィールドアクセッサに変換することもでき、それは時々、性能を最適化することに寄与する。</p>
 
-<h4>Singleton class types</h4>
+<h4>シングルトンクラス型(？正確な訳？)</h4>
 
-<p>It&rsquo;s common in Scala to create singleton class types, for example</p>
+<p>Scala では、シングルトンクラス型を生成するのは一般的である。例えば、</p>
 
-<pre><code>def foo() = new Foo with Bar with Baz {
-  ...
-}
+<pre><code> def foo() = new Foo with Bar with Baz {
+   ...
+ }
 </code></pre>
 
-<p class="LP">In these situations, visibility can be constrained by declaring the returned type:</p>
+<p class="LP">このような状況では、戻り型を宣言することで可視性は限定される。</p>
 
-<pre><code>def foo(): Foo with Bar = new Foo with Bar with Baz {
-  ...
-}
+<pre><code> def foo(): Foo with Bar = new Foo with Bar with Baz {
+   ...
+ }
 </code></pre>
 
-<p class="LP">where callers of <code>foo()</code> will see a restricted view (<code>Foo with Bar</code>) of the returned instance.</p>
+<p class="LP"><code>foo()</code> の呼び出し側は、戻されたインスタンスの限定されたビュー(<code>Foo with Bar</code>) が参照できる</p>
 
-<p><a id="Object oriented programming-Structural typing" /></p>
+<p><a id="オブジェクト指向プログラミング-構造的型(？正確な訳？)" /></p>
 
-<h3>Structural typing</h3>
+<h3>構造的型(？正確な訳？)</h3>
 
-<p>Do not use structural types in normal use. They are a convenient and
-powerful feature, but unfortunately do not have an efficient
-implementation on the JVM. However &mdash; due to an implemenation quirk &mdash;
-they provide a very nice shorthand for doing reflection.</p>
+<p>通常の使用では構造的型は使わない。構造的型は、便利で強力な機能であるが、残念あんことにJVM上では効率的な実装手段はない。しかし、ある運命のいたずらともいうべき実装によって、リフレクションをするためのとても良い速記法を提供する。</p>
 
-<pre><code>val obj: AnyRef
-obj.asInstanceOf[{def close()}].close()
+<pre><code> val obj: AnyRef
+ obj.asInstanceOf[{def close()}].close()
 </code></pre>
 
-<p><a id="Garbage collection" /></p>
+<p><a id="ガベージコレクション" /></p>
 
-<h2>Garbage collection</h2>
+<h2>ガベージコレクション</h2>
 
-<p>We spend a lot of time tuning garbage collection in production. The
-garbage collection concerns are largely similar to those of Java
-though idiomatic Scala code tends to generate more (short-lived)
-garbage than idiomatic Java code &mdash; a byproduct of the functional
-style. Hotspot&rsquo;s generational garbage collection typically makes this
-a nonissue as short lived garbage effectively free in most circumstances</p>
+<p>我々は、運用時にガベージコレクションのチューニングに多くの時間を費やす。
+ガベージコレクションの考慮事項はかなりJavaのそれに似ているが、典型的な Scala コードの場合は 典型的な Java コードより多くの(生存時間の短い)ガベージを生成する。これは関数スタイルの副作用なのである。HotSpot の世代別ガベージコレクションは、ほとんどの環境では生存時間の短いガベージを効果的に解放するので、概してこれは問題にならない。</p>
 
-<p>Before tackling GC performance issues, watch
-<a href="http://www.infoq.com/presentations/JVM-Performance-Tuning-twitter">this</a>
-presentation by Attila that illustrates some of our experiences with
-GC tuning.</p>
+<p>GCの性能問題に取り組む前に、Attila が発表した我々のGCチューニングに関する経験のいくつかに関する<a href="http://www.infoq.com/presentations/JVM-Performance-Tuning-twitter">プレゼンテーション</a>を見て欲しい。</p>
 
-<p>In Scala proper, your only tool to mitigate GC problems is to generate
-less garbage; but do not act without data! Unless you are doing
-something obviously degenerate, use the various Java profiling tools
-&mdash; our own include
-<a href="https://github.com/mariusaeriksen/heapster">heapster</a> and
-<a href="https://github.com/twitter/jvmgcprof">gcprof</a>.</p>
+<p>Scala 固有で、GC問題を軽減する唯一のツールは、ガベージの生成をより少なくすることである。しかし、データなしで行動してはならない！もし、明らかに悪化させる何かをしているわけではないのであれば、我々の提供する <a href="https://github.com/mariusaeriksen/heapster">heapster</a> や
+<a href="https://github.com/twitter/jvmgcprof">gcprof</a> を含む、Java の様々なプロファイルツールを使うことだ。</p>
 
-<p><a id="Java compatibility" /></p>
+<p><a id="Java 互換性" /></p>
 
-<h2>Java compatibility</h2>
+<h2>Java 互換性</h2>
 
-<p>When we write code in Scala that is used from Java, we ensure
-that usage from Java remains idiomatic. Oftentimes this requires
-no extra effort &mdash; classes and pure traits are exactly equivalent
-to their Java counterpart &mdash; but sometimes separate Java APIs
-need to be provided. A good way to get a feel for your library&rsquo;s Java
-API is to write a unittest in Java (just for compilation); this also ensures
-that the Java-view of your library remains stable over time as the Scala
-compiler can be volatile in this regard.</p>
+<p>我々は、Scala コードをJavaで利用するとき、Javaでの使い方を慣用的に残して良いものか確かめるようにしている。大体は余計な努力は必要ない。クラス群と実装を含まないトレイトはJava に正確に等価に対応される。しかし、時々、別にJava APIを提供する必要がある。あなたのライブラリのJava API の感じをつかむ良い方法は単体テストをJavaで書くことである(ただコンパイルが通れば良い)。この点については Scala コンパイラーは不安定であるのだが、このテストによって、あなたのライブラリの Java 視点は安定さを維持できる。</p>
 
-<p>Traits that contain implementation are not directly
-usable from Java: extend an abstract class with the trait
-instead.</p>
+<p>実装を含むトレイトは直接 Java から利用できない。代わりに抽象クラスをトレイトと共に拡張する必要がある。</p>
 
-<pre><code>// Not directly usable from Java
-trait Animal {
-  def eat(other: Animal)
-  def eatMany(animals: Seq[Animal) = animals foreach(eat(_))
-}
+<pre><code> // 直接 Java から利用できない
+ trait Animal {
+   def eat(other: Animal)
+   def eatMany(animals: Seq[Animal) = animals foreach(eat(_))
+ }
 
-// But this is:
-abstract class JavaAnimal extends Animal
+ // しかし、これはできる
+ abstract class JavaAnimal extends Animal
 </code></pre>
 
 <p><a id="Twitter's standard libraries" /></p>
