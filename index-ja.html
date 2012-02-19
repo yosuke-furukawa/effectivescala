@@ -124,7 +124,7 @@
 <li><strong><a href="#整形">整形</a></strong>: <em><a href="#整形-ホワイトスペース">ホワイトスペース</a></em>, <em><a href="#整形-命名">命名</a></em>, <em><a href="#整形-インポート">インポート</a></em>, <em><a href="#整形-中カッコ">中カッコ</a></em>, <em><a href="#整形-パターンマッチ">パターンマッチ</a></em>, <em><a href="#整形-コメント">コメント</a></em></li>
 <li><strong><a href="#型とジェネリクス">型とジェネリクス</a></strong>: <em><a href="#型とジェネリクス-戻り型アノテーション">戻り型アノテーション</a></em>, <em><a href="#型とジェネリクス-変位">変位</a></em>, <em><a href="#型とジェネリクス-型エイリアス">型エイリアス</a></em>, <em><a href="#型とジェネリクス-暗黙">暗黙</a></em></li>
 <li><strong><a href="#コレクション">コレクション</a></strong>: <em><a href="#コレクション-階層">階層</a></em>, <em><a href="#コレクション-利用">利用</a></em>, <em><a href="#コレクション-スタイル">スタイル</a></em>, <em><a href="#コレクション-性能">性能</a></em>, <em><a href="#コレクション-Javaコレクション">Javaコレクション</a></em></li>
-<li><strong><a href="#並行性">並行性</a></strong>: <em><a href="#並行性-Future">Future</a></em>, <em><a href="#並行性-Collections">Collections</a></em></li>
+<li><strong><a href="#並行性">並行性</a></strong>: <em><a href="#並行性-Future">Future</a></em>, <em><a href="#並行性-コレクション">コレクション</a></em></li>
 <li><strong><a href="#Control structures">Control structures</a></strong>: <em><a href="#Control structures-Recursion">Recursion</a></em>, <em><a href="#Control structures-Returns">Returns</a></em>, <em><a href="#Control structures-`for` loops and comprehensions"><code>for</code> loops and comprehensions</a></em>, <em><a href="#Control structures-`require` and `assert`"><code>require</code> and <code>assert</code></a></em></li>
 <li><strong><a href="#Functional programming">Functional programming</a></strong>: <em><a href="#Functional programming-Case classes as algebraic data types">Case classes as algebraic data types</a></em>, <em><a href="#Functional programming-Options">Options</a></em>, <em><a href="#Functional programming-Pattern matching">Pattern matching</a></em>, <em><a href="#Functional programming-Partial functions">Partial functions</a></em>, <em><a href="#Functional programming-Destructuring bindings">Destructuring bindings</a></em>, <em><a href="#Functional programming-Lazyness">Lazyness</a></em>, <em><a href="#Functional programming-Call by name">Call by name</a></em>, <em><a href="#Functional programming-`flatMap`"><code>flatMap</code></a></em></li>
 <li><strong><a href="#オブジェクト指向プログラミング">オブジェクト指向プログラミング</a></strong>: <em><a href="#オブジェクト指向プログラミング-依存性注入">依存性注入</a></em>, <em><a href="#オブジェクト指向プログラミング-トレイト">トレイト</a></em>, <em><a href="#オブジェクト指向プログラミング-可視性">可視性</a></em>, <em><a href="#オブジェクト指向プログラミング-構造的型(？正確な訳？)">構造的型(？正確な訳？)</a></em></li>
@@ -616,33 +616,15 @@ collect() onSuccess { results =&gt;
 
 <p><em>Futureの結合子(combinator)を使おう。</em><code>Future.select</code>や<code>Future.join</code>、そして<code>Future.collect</code>は、複数のFutureを結合して操作する際の一般的なパターンを体系化している。</p>
 
-<p><a id="並行性-Collections" /></p>
+<p><a id="並行性-コレクション" /></p>
 
-<h3>Collections</h3>
+<h3>コレクション</h3>
 
-<p>The subject of concurrent collections is fraught with opinions,
-subtleties, dogma and FUD. In most practical situations they are a
-nonissue: Always start with the simplest, most boring, and most
-standard collection that serves the purpose. Don&rsquo;t reach for a
-concurrent collection before you <em>know</em> that a synchronized one won&rsquo;t
-do: the JVM has sophisticated machinery to make synchronization cheap,
-so their efficacy may surprise you.</p>
+<p>並行コレクションの話題は、私見と、機微と、教義と、FUDに満ちている。それらは、多くの場合、実践において取るに足らない問題だ。いつでも、目的を果たす上で、最も単純で、最も退屈で、最も標準的なコレクションから始めよう。同期化コレクションでうまくいかないのが<em>分かる</em>前に、並行コレクションに手を伸ばしてはいけない。JVMは、同期を低コストで実現する洗練された機構を持っている。その有効性に、君は驚くはずだ。</p>
 
-<p>If an immutable collection will do, use it &mdash; they are referentially
-transparent, so reasoning about them in a concurrent context is
-simple. Mutations in immutable collections are typically handled by
-updating a reference to the current value (in a <code>var</code> cell or an
-<code>AtomicReference</code>). Care must be taken to apply these correctly:
-atomics must be retried, and <code>vars</code> must be declared volatile in order
-for them to be published to other threads.</p>
+<p>それで目的を果たせるなら、不変(immutable)コレクションを使おう。不変コレクションは参照透過なので、並行コンテキストにおいて判断がシンプルになる。不変コレクションを変更する処理は、主に（<code>var</code>セルや<code>AtomicReference</code>が指す）現在の値への参照を更新することで行う。不変コレクションの変更を適用する際は、注意を払う必要がある。他のスレッドへ不変コレクションを公開する場合、<code>AtomicReference</code>には再試行が必要だし、<code>var</code>変数は<code>volatile</code>として宣言しなきゃいけない。</p>
 
-<p>Mutable concurrent collections have complicated semantics, and make
-use of subtler aspects of the Java memory model, so make sure you
-understand the implications &mdash; especially with respect to publishing
-updates &mdash; before you use them. Synchronized collections also compose
-better: operations like <code>getOrElseUpdate</code> cannot be implemented
-correctly by concurrent collections, and creating composite
-collections is especially error prone.</p>
+<p>可変(mutable)な並行コレクションは複雑な動作をするだけでなく、Javaメモリモデルの微妙な部分を利用する。だから、可変並行コレクションが更新を公開する方法など、暗黙的な挙動について理解しておこう。また、コレクションの合成には同期化コレクションを使おう。並行コレクションでは、<code>getOrElseUpdate</code>のような操作は正しく実装することができないし、特に、合成コレクションの作成はエラーの温床だ。</p>
 
 <!--
 
