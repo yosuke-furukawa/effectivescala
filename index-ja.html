@@ -125,7 +125,7 @@
 <li><strong><a href="#型とジェネリクス">型とジェネリクス</a></strong>: <em><a href="#型とジェネリクス-戻り型アノテーション">戻り型アノテーション</a></em>, <em><a href="#型とジェネリクス-変位">変位</a></em>, <em><a href="#型とジェネリクス-型エイリアス">型エイリアス</a></em>, <em><a href="#型とジェネリクス-暗黙">暗黙</a></em></li>
 <li><strong><a href="#コレクション">コレクション</a></strong>: <em><a href="#コレクション-階層">階層</a></em>, <em><a href="#コレクション-利用">利用</a></em>, <em><a href="#コレクション-スタイル">スタイル</a></em>, <em><a href="#コレクション-性能">性能</a></em>, <em><a href="#コレクション-Javaコレクション">Javaコレクション</a></em></li>
 <li><strong><a href="#並行性">並行性</a></strong>: <em><a href="#並行性-Future">Future</a></em>, <em><a href="#並行性-コレクション">コレクション</a></em></li>
-<li><strong><a href="#Control structures">Control structures</a></strong>: <em><a href="#Control structures-Recursion">Recursion</a></em>, <em><a href="#Control structures-Returns">Returns</a></em>, <em><a href="#Control structures-`for` loops and comprehensions"><code>for</code> loops and comprehensions</a></em>, <em><a href="#Control structures-`require` and `assert`"><code>require</code> and <code>assert</code></a></em></li>
+<li><strong><a href="#制御構造">制御構造</a></strong>: <em><a href="#制御構造-再帰">再帰</a></em>, <em><a href="#制御構造-Return">Return</a></em>, <em><a href="#制御構造-`for`ループと内包"><code>for</code>ループと内包</a></em>, <em><a href="#制御構造-`require`と`assert`"><code>require</code>と<code>assert</code></a></em></li>
 <li><strong><a href="#Functional programming">Functional programming</a></strong>: <em><a href="#Functional programming-Case classes as algebraic data types">Case classes as algebraic data types</a></em>, <em><a href="#Functional programming-Options">Options</a></em>, <em><a href="#Functional programming-Pattern matching">Pattern matching</a></em>, <em><a href="#Functional programming-Partial functions">Partial functions</a></em>, <em><a href="#Functional programming-Destructuring bindings">Destructuring bindings</a></em>, <em><a href="#Functional programming-Lazyness">Lazyness</a></em>, <em><a href="#Functional programming-Call by name">Call by name</a></em>, <em><a href="#Functional programming-`flatMap`"><code>flatMap</code></a></em></li>
 <li><strong><a href="#オブジェクト指向プログラミング">オブジェクト指向プログラミング</a></strong>: <em><a href="#オブジェクト指向プログラミング-依存性注入">依存性注入</a></em>, <em><a href="#オブジェクト指向プログラミング-トレイト">トレイト</a></em>, <em><a href="#オブジェクト指向プログラミング-可視性">可視性</a></em>, <em><a href="#オブジェクト指向プログラミング-構造的型(？正確な訳？)">構造的型(？正確な訳？)</a></em></li>
 <li><strong><a href="#ガベージコレクション">ガベージコレクション</a></strong></li>
@@ -283,7 +283,7 @@ import concurrent</code></pre>のようには書かず、以下のように曖�
  */
 </code></pre>
 
-<p class="LP">しかし、以下は標準のScalaDocスタイル<em>ではない</em>:</p>
+<p class="LP">でも標準のScalaDocスタイルは<em>使わない</em>ように:</p>
 
 <pre><code>/** ServiceBuilder builds services
  * ...
@@ -612,7 +612,7 @@ collect() onSuccess { results =&gt;
 }
 </code></pre>
 
-<p>順列の操作に<code>flatMap</code>を使うと、処理が進むにつれて、リストの先頭に結果を追加できる。これは、関数型プログラミングの一般的なイディオムを、Futureに置き換えたものだ。これは正しく動作するだけでなく、必要な「おまじない」を少なくでき、間違いの元を減らすことができる。そして、読みやすい。</p>
+<p>シーケンスの操作に<code>flatMap</code>を使うと、処理が進むにつれて、リストの先頭に結果を追加できる。これは、関数型プログラミングの一般的なイディオムを、Futureに置き換えたものだ。これは正しく動作するだけでなく、必要な「おまじない」を少なくでき、間違いの元を減らすことができる。そして、読みやすい。</p>
 
 <p><em>Futureの結合子(combinator)を使おう。</em><code>Future.select</code>や<code>Future.join</code>、そして<code>Future.collect</code>は、複数のFutureを結合して操作する際の一般的なパターンを体系化している。</p>
 
@@ -622,9 +622,9 @@ collect() onSuccess { results =&gt;
 
 <p>並行コレクションの話題は、私見と、機微と、教義と、FUDに満ちている。それらは、多くの場合、実践において取るに足らない問題だ。いつでも、目的を果たす上で、最も単純で、最も退屈で、最も標準的なコレクションから始めよう。同期化コレクションでうまくいかないのが<em>分かる</em>前に、並行コレクションに手を伸ばしてはいけない。JVMは、同期を低コストで実現する洗練された機構を持っている。その有効性に、君は驚くはずだ。</p>
 
-<p>それで目的を果たせるなら、不変(immutable)コレクションを使おう。不変コレクションは参照透過なので、並行コンテキストにおいて判断がシンプルになる。不変コレクションを変更する処理は、主に（<code>var</code>セルや<code>AtomicReference</code>が指す）現在の値への参照を更新することで行う。不変コレクションの変更を適用する際は、注意を払う必要がある。他のスレッドへ不変コレクションを公開する場合、<code>AtomicReference</code>には再試行が必要だし、<code>var</code>変数は<code>volatile</code>として宣言しなきゃいけない。</p>
+<p>不変(immutable)コレクションで目的を果たせるなら、それを使おう。不変コレクションは参照透過なので、並行コンテキストでの推論が簡単になる。不変コレクションの変更は、主に（<code>var</code>セルや<code>AtomicReference</code>が指す）現在の値への参照を更新することで行う。不変コレクションの変更を適用する際は、注意が必要だ。他のスレッドへ不変コレクションを公開する場合、<code>AtomicReference</code>には再試行が必要だし、<code>var</code>変数は<code>volatile</code>として宣言しなければいけない。</p>
 
-<p>可変(mutable)な並行コレクションは複雑な動作をするだけでなく、Javaメモリモデルの微妙な部分を利用する。だから、可変並行コレクションが更新を公開する方法など、暗黙的な挙動について理解しておこう。また、コレクションの合成には同期化コレクションを使おう。並行コレクションでは、<code>getOrElseUpdate</code>のような操作は正しく実装することができないし、特に、合成コレクションの作成はエラーの温床だ。</p>
+<p>可変(mutable)な並行コレクションは複雑な動作をするだけでなく、Javaメモリモデルの微妙な部分を利用する。だから、可変並行コレクションが更新を公開する方法など、暗黙的な挙動について理解しておこう。また、コレクションの合成には同期化コレクションを使おう。並行コレクションでは、<code>getOrElseUpdate</code>のような操作を正しく実装できないし、特に、合成コレクションの作成はエラーの温床だ。</p>
 
 <!--
 
@@ -638,29 +638,19 @@ Async*?
 
 -->
 
-<p><a id="Control structures" /></p>
+<p><a id="制御構造" /></p>
 
-<h2>Control structures</h2>
+<h2>制御構造</h2>
 
-<p>Programs in the functional style tends to require fewer traditional
-control structure, and read better when written in the declarative
-style. This typically implies breaking your logic up into several
-small methods or functions, and gluing them together with <code>match</code>
-expressions. Functional programs also tend to be more
-expression-oriented: branches of conditionals compute values of
-the same type, <code>for (..) yield</code> computes comprehensions, and recursion
-is commonplace.</p>
+<p>関数型スタイルで書くプログラムは、宣言型スタイルで書く場合より伝統的な制御構造が少なく済むことが多く、また読みやすい。関数型スタイルとは、典型的には、ロジックをいくつかの小さなメソッドや関数に分解し、それらを互いに<code>match</code>式で貼り合わせることを意味する。また、関数型プログラムは、より式指向となる傾向がある。つまり、条件式の分岐で同じ型の値を計算し、<code>for (..) yield</code>で内包(comprehension)を計算する。また、再帰を一般的に利用する。</p>
 
-<p><a id="Control structures-Recursion" /></p>
+<p><a id="制御構造-再帰" /></p>
 
-<h3>Recursion</h3>
+<h3>再帰</h3>
 
-<p><em>Phrasing your problem in recursive terms often simplifies it,</em> and if
-the tail call optimization applies (which can be checked by the <code>@tailrec</code>
-annotation), the compiler will even translate your code into a regular loop.</p>
+<p><em>再帰表現を使うと、問題をしばしば簡潔に記述できる。</em>そしてコンパイラは、末尾呼び出しの最適化が適用できるコードを、正規のループに置き換える（末尾最適化が適用されるかは<code>@tailrec</code>アノテーションで確認できる）。</p>
 
-<p>Consider a fairly standard imperative version of heap <span
-class="algo">fix-down</span>:</p>
+<p>ヒープの<span class="algo">fix-down</span>を、極めて標準的な命令型で実装したバージョンを検討しよう:</p>
 
 <pre><code>def fixDown(heap: Array[T], m: Int, n: Int): Unit = {
   var k: Int = m
@@ -678,14 +668,9 @@ class="algo">fix-down</span>:</p>
 }
 </code></pre>
 
-<p>Every time the while loop is entered, we&rsquo;re working with state dirtied
-by the previous iteration. The value of each variable is a function of
-which branches were taken, and it returns in the middle of the loop
-when the correct position was found (The keen reader will find similar
-arguments in Dijkstra&rsquo;s <a href="http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html">&ldquo;Go To Statement Considered Harmful&rdquo;</a>).</p>
+<p>このコードでは、whileループに入るたび、一つ前の反復で変更された状態を参照する。各変数の値は、どの分岐を取るかに依存する。また、正しい位置が見つかると、関数はループの中盤で<code>return</code>する（鋭い読者は、ダイクストラの<a href="http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html">&ldquo;Go To Statement Considered Harmful&rdquo;</a>に同様の議論があることに気づくと思う）。</p>
 
-<p>Consider a (tail) recursive
-implementation<a class="noteref" id="fnref2" href="#fn2" title="Jump to note 2">[2]</a>:</p>
+<p>（末尾）再帰による実装を検討してみよう<a class="noteref" id="fnref2" href="#fn2" title="Jump to note 2">[2]</a>:</p>
 
 <pre><code>@tailrec
 final def fixDown(heap: Array[T], i: Int, j: Int) {
@@ -699,27 +684,21 @@ final def fixDown(heap: Array[T], i: Int, j: Int) {
 }
 </code></pre>
 
-<p class="LP">here every iteration starts with a well-defined <em>clean slate</em>, and there are no reference cells: invariants abound. It&rsquo;s much easier to reason about, and easier to read as well. There is also no performance penalty: since the method is tail-recursive, the compiler translates this into a standard imperative loop.</p>
+<p class="LP">ここでは、すべての反復ははっきりと<em>白紙の状態で</em>開始される。また、参照セルが存在しないため、不変条件を数多く見出せる。このコードはより推論しやすいだけでなく、より読みやすい。それだけでなく、性能面のペナルティもない。コンパイラはメソッドが末尾再帰なら、これを標準的な命令型のループへと変換するからだ。</p>
+
+<p>（訳注: <a href="http://ja.wikipedia.org/wiki/%E3%82%A8%E3%83%89%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%80%E3%82%A4%E3%82%AF%E3%82%B9%E3%83%88%E3%83%A9">エドガー・ダイクストラ</a>は、構造化プログラミングの提唱者。彼が執筆したエッセイ&ldquo;Go To Statement Considered Harmful&rdquo;は、「GOTO有害論」の端緒として有名。）</p>
 
 <!--
 elaborate..
 -->
 
-<p><a id="Control structures-Returns" /></p>
+<p><a id="制御構造-Return" /></p>
 
-<h3>Returns</h3>
+<h3>Return</h3>
 
-<p>This is not to say that imperative structures are not also valuable.
-In many cases they are well suited to terminate computation early
-instead of having conditional branches for every possible point of
-termination: indeed in the above <code>fixDown</code>, a <code>return</code> is used to
-terminate early if we&rsquo;re at the end of the heap.</p>
+<p>前節では再帰を使うメリットを紹介したが、これは「命令型の構造は無価値だ」と言いたいわけじゃない。ほとんどの場合、計算を早期に打ち切る方が、終点の可能性がある全ての位置に条件分岐を持つよりも適切だ。実際に、上記の<code>fixDown</code>は、ヒープの終端に達すると<code>return</code>によって早期に終了する。</p>
 
-<p>Returns can be used to cut down on branching and establish invariants.
-This helps the reader by reducing nesting (how did I get here?) and
-making it easier to reason about the correctness of subsequent code
-(the array cannot be accessed out of bounds after this point). This is
-especially useful in &ldquo;guard&rdquo; clauses:</p>
+<p><code>return</code>を使うと、分岐を省略して不変条件を確立できる。これにより、入れ子が減って読みやすくなるだけでなく、後続のコードの正当性を論証しやすくなる（配列の範囲外をアクセスしないことを確認する場合とか）。これは、&ldquo;ガード節&rdquo;で特に有用だ:</p>
 
 <pre><code>def compare(a: AnyRef, b: AnyRef): Int = {
   if (a eq b)
@@ -733,9 +712,7 @@ especially useful in &ldquo;guard&rdquo; clauses:</p>
 }
 </code></pre>
 
-<p>Use <code>return</code>s to clarify and enhance readability, but not as you would
-in an imperative language; avoid using them to return the results of a
-computation. Instead of</p>
+<p><code>return</code>を使って、コードを明快にして読みやすさを高めよう。ただし、命令型言語でのような使い方をしてはいけない。つまり、下記のように計算結果を返すために<code>return</code>を使うのは避けよう。</p>
 
 <pre><code>def suffix(i: Int) = {
   if      (i == 1) return &quot;st&quot;
@@ -745,7 +722,7 @@ computation. Instead of</p>
 }
 </code></pre>
 
-<p class="LP">prefer:</p>
+<p class="LP">代わりに下記のように書こう:</p>
 
 <pre><code>def suffix(i: Int) =
   if      (i == 1) &quot;st&quot;
@@ -754,7 +731,7 @@ computation. Instead of</p>
   else             &quot;th&quot;
 </code></pre>
 
-<p class="LP">but using a <code>match</code> expression is superior to either:</p>
+<p class="LP">しかし、より優れているのは<code>match</code>式を使うことだ:</p>
 
 <pre><code>def suffix(i: Int) = i match {
   case 1 =&gt; &quot;st&quot;
@@ -764,7 +741,7 @@ computation. Instead of</p>
 }
 </code></pre>
 
-<p>Note that returns can have hidden costs: when used inside of a closure,</p>
+<p>なお、クロージャの内部で<code>return</code>を使うと、目に見えないコストが発生する場合があるので注意しよう。</p>
 
 <pre><code>seq foreach { elem =&gt;
   if (elem.isLast)
@@ -774,43 +751,34 @@ computation. Instead of</p>
 }
 </code></pre>
 
-<p class="LP">this is implemented in bytecode as an exception catching/throwing pair which, used in hot code, has performance implications.</p>
+<p class="LP">このコードは、バイトコードでは例外の`throw`と`catch`として実装されるので、実行頻度の高いコードで使うと、性能に影響を与える。</p>
 
-<p><a id="Control structures-`for` loops and comprehensions" /></p>
+<p><a id="制御構造-`for`ループと内包" /></p>
 
-<h3><code>for</code> loops and comprehensions</h3>
+<h3><code>for</code>ループと内包</h3>
 
-<p><code>for</code> provides both succinct and natural expression for looping and
-aggregation. It is especially useful when flattening many sequences.
-The syntax of <code>for</code> belies the underlying mechanism as it allocates
-and dispatches closures. This can lead to both unexpected costs and
-semantics; for example</p>
+<p><code>for</code>を使うと、ループと集約を簡潔かつ自然に表現できる。<code>for</code>は、多数のシーケンスを平坦化する場合に特に有用だ。<code>for</code>の構文は、内部的にはクロージャを割り当てて呼び出していることを覆い隠している。このため、予期しないコストが発生したり、予想外の挙動を示したりする。例えば、</p>
 
 <pre><code>for (item &lt;- container) {
   if (item != 2) return
 }
 </code></pre>
 
-<p class="LP">may cause a runtime error if the container delays computation, making the <code>return</code> nonlocal!</p>
+<p class="LP">このコードでは、<code>return</code>を非局所的(nonlocal)にするよう`container`が計算を遅延させると、ランタイムエラーが発生することがある！（訳注: どういう意味？）</p>
 
-<p>For these reasons, it is often preferrable to call <code>foreach</code>,
-<code>flatMap</code>, <code>map</code>, and <code>filter</code> directly &mdash; but do use <code>for</code>s when they
-clarify.</p>
+<p>これらの理由から、コードを明瞭にするためである場合を除いて、<code>for</code>を使う代わりに、<code>foreach</code>や<code>flatMap</code>や<code>map</code>や<code>filter</code>を直接呼び出す方が良いことが多い。</p>
 
-<p><a id="Control structures-`require` and `assert`" /></p>
+<p><a id="制御構造-`require`と`assert`" /></p>
 
-<h3><code>require</code> and <code>assert</code></h3>
+<h3><code>require</code>と<code>assert</code></h3>
 
-<p><code>require</code> and <code>assert</code> both serve as executable documentation. Both are
-useful for situations in which the type system cannot express the required
-invariants. <code>assert</code> is used for <em>invariants</em> that the code assumes (either
-internal or external), for example</p>
+<p><code>require</code>と<code>assert</code>は、どちらも実行可能なドキュメントとして機能する。これらは、要求される不変条件を型システムが表現できない状況で有用だ。<code>assert</code>は、コードが仮定する（内部あるいは外部の）<em>不変条件</em>を表現するために使われる。例えば、</p>
 
 <pre><code>val stream = getClass.getResourceAsStream(&quot;someclassdata&quot;)
 assert(stream != null)
 </code></pre>
 
-<p>Whereas <code>require</code> is used to express API contracts:</p>
+<p>一方で、<code>require</code>はAPIの契約を表現するために使われる:</p>
 
 <pre><code>def fib(n: Int) = {
   require(n &gt; 0)
@@ -1521,8 +1489,8 @@ guidance and many excellent suggestions.</p>
 <li id="fn1">
 <a href="http://yourkit.com">Yourkit</a>は良いプロファイラだ。 <a href="#fnref1" title="Jump back to reference">[back]</a></li>
 <li id="fn2">
-From <a href="https://github.com/twitter/finagle/blob/master/finagle-core/src/main/scala/com/twitter/finagle/loadbalancer/Heap.scala#L41">Finagle&rsquo;s heap
-balancer</a> <a href="#fnref2" title="Jump back to reference">[back]</a></li>
+<a href="https://github.com/twitter/finagle/blob/master/finagle-core/src/main/scala/com/twitter/finagle/loadbalancer/Heap.scala#L41">Finagle&rsquo;s heap
+balancer</a>より <a href="#fnref2" title="Jump back to reference">[back]</a></li>
 </ol>
 
 <center class="footer">
