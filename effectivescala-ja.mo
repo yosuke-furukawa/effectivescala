@@ -591,48 +591,53 @@ elaborate..
 
 ## 関数型プログラミング
 
-*値指向* プログラミングは多くの長所を、特に関数型プログラミングの構成物と一体的に利用するときにであるが、享受(confer)する。このスタイルはステートフルな変更よりも値の変換を強調し、参照透過(referentially transparent)であるコードを生み出し、より強い不変式(invariants)を提供し、それ故に、その変換を推論することも容易にする。ケースクラスや、パターンマッチング、destructuring-bind(未訳)、型推論、軽量なクロージャ、メソッド生成構文は、この職業の道具達である。
+関数型プログラミングと一緒に用いる時に *値志向型* プログラミングは多くの恩恵を受ける。このスタイルはステートフルな変更よりも値の変換を強調する。得られるコードは参照透明であり、より強力な不変式を提供し、さらに容易に推論することが可能になる。Caseクラス、パターンマッチング、構造化代入、型推論、軽量クロージャ、メソッド生成構文がこのツールになる。
 
-### 代数的データ型としてのケースクラス
 
-ケースクラスは、ADT(訳注:Abstract Data Type、抽象データ型)を符号化する。ケースクラスは、大量のデータ構造をモデリングしたり、強力な不変式(invariants)を持つ簡潔なコードを提供したりすることに有用であり、特にパターンマッチングと組み合わせた時に効果を発揮する。パターンマッチャーは、より強力な静的保証さえ提供することができる包括的分析(exhaustivity analysis)を実装する。ケースクラスでADTをエンコードするときは次のパターンを利用する。
+### 代数的データ型としてのCaseクラス
+
+Caseクラスは代数的データ型(ADT)をエンコードする。パターンマッチングと共に利用することでCaseクラスは巨大なデータ構造をモデリングするのに役に立ち、強力な不変式を簡潔なコードとして提供する。パターンマッチャーは強力で静的保証を提供する包括的分析(exhaustivity analysis)を実装している。
+
+Caseクラスと共に代数的データ型をエンコードする時、以下のパターンを使うべきである：
 
 	sealed trait Tree[T]
 	case class Node[T](left: Tree[T], right: Tree[T]) extends Tree[T]
 	case class Leaf[T](value: T) extends Tree[T]
 
-</code>型は、<code>Node</code> と <code>Leaf</code> という2つのコンストラクタを持つ。型を <code>sealed</code> に宣言することで、当該ソースファイルの外側でコンストラクタを追加することはできないから、コンパイラに包括的分析(exhaustivity analysis)をさせるようにできる。パターンマッチングと共に利用することで、そのようなモデリングは、両方とも簡潔に"明らかに正しい"コードをもたらす。
+<code>Tree[T]</code>の型は<code>Node</code>と<code>Leaf</code>の2つのコンストラクタを持つ。<code>sealed</code>として型を宣言する事で、ソースファイルの外からコンストラクタを追加することを制限できるため、コンパイラーに包括的分析(exhaustivity analysis)を行わせることができる。
+
+パターンマッチングとそのようなモデリングを一緒にすれば、簡潔かつ"明らかに正しい"コードにすることができる。
 
 	def findMin[T <: Ordered[T]](tree: Tree[T]) = tree match {
 	  case Node(left, right) => Seq(findMin(left), findMin(right)).min
 	  case Leaf(value) => value
 	}
 
-木のような再帰的な構造が古典的なアプリケーションのADTを構成する一方で、有用性のある領域はもっと大きいのである。特に結合(unions)の解体は、容易にADTにモデル化される。これらはステートマシンでしばしば発生する。
+ツリーのような再帰構造は代数的データ型の古典的なアプリケーションを構成する一方で、それらの有用な領域はかなり大きい。代数的データ型でモデリングされた結合の分解は状態遷移で頻繁に発生する。
 
 ### オプション
-`Option`型は、空であること(`None`)、または満たされていること(`Some(value)`)を表す容器である。`null`に対する安全な代替手段を提供し、可能な限り如何なる時も利用されるべきである。`Option`型は、たかだかひとつの要素を持つコレクションであり、コレクションの操作で装飾される。利用しよう！
+オプション型は無(None型)か有(Some(Value)型)のどちらかを格納するコンテナである。nullの代わりに安全に使用でき、いつでも安定して使用されるべきである。オプション型は集合(ほとんどの場合一つの要素しかない)であり、集合の操作で利用できる。使うしかない!
 
-こう書く
+以下のように書くべきである。
 
 	var username: Option[String] = None
 	...
 	username = Some("foobar")
 
-.LP 下記の代わりにである。
+.LP 以下のように書いてはいけない。
 
 	var username: String = null
 	...
 	username = "foobar"
 
-.LP <code>Option</code>型が<code>username</code>が空であるかをチェックしなければならないことを静的に強制するため、前者はより安全だからである。
+.LP 前者の方が安全な理由：<code>Option</code>型は<code>username</code>が空であることをチェックされなければならないことを静的に強要しているため。
 
-`Option`の値の条件節の実行は`foreach`を使うべきである。下記の代わりに、
+`Option`の値の条件節の実行は`foreach`を使うべきである。以下のように書いてはいけない。
 
 	if (opt.isDefined)
 	  operate(opt.get)
 
-.LP このように書く
+.LP 以下のように書く
 
 	opt foreach { value =>
 	  operate(value)}
@@ -644,81 +649,75 @@ elaborate..
 	  case None => defaultAction()
 	}
 
-.LP しかし、もし足りないものがデフォルト値だけであるなら、<code>getOrElse</code> を使う。
+.LP しかし、もし値がない場合はdefault値で良いのであれば、<code>getOrElse</code>を使おう。
 
 	operate(opt getOrElse defaultValue)
 
-`Option`を使いすぎてはいけない。もし、何か道理にかなった既定値、[*Null Object*](http://en.wikipedia.org/wiki/Null_Object_pattern)、があるなら、代わりにそれを使う。
+`Option`を多用してはいけない。もし、何か目的にあったdefault値、[*Null Object*](http://en.wikipedia.org/wiki/Null_Object_pattern)、があるなら、代わりにそれを使おう。
 
-`Option`は、また、nullになりうる値を包む扱いやすいコンストラクターと共に使う。
+`Option`はnullになり得る値を格納する扱いやすいコンストラクターと共に使う。
 
 	Option(getClass.getResourceAsStream("foo"))
 
-.LP は、<code>Option[InputStream]</code> であり、<code>getResourceAsStream</code> が <code>null</code> を返す場合に、<code>None</code>  という値を返すものである。
+.LP は、<code>Option[InputStream]</code> であり、<code>getResourceAsStream</code> が <code>null</code> を返す場合に、<code>None</code>  という値を返す。
 
-### Pattern matching
+### パターンマッチング
 
-Pattern matches (`x match { ...`) are pervasive in well written Scala
-code: they conflate conditional execution, destructuring, and casting
-into one construct. Used well they enhance both clarity and safety.
+パターンマッチ(`x match { ...`) はScalaで書かれたコード内に広く使われている: それらは条件節での実行、分解そしてあるコンストラクトへのキャストを複合的に使用する。明快さと安全性の両方を強調するのに広く使われる。
 
-Use pattern matching to implement type switches:
+型ごとの処理を実現するためにパターンマッチングを以下のように使う:
 
 	obj match {
 	  case str: String => ...
 	  case addr: SocketAddress => ...
 
-Pattern matching works best when also combined with destructuring (for
-example if you are matching case classes); instead of
+パターンマッチングは分解して複合的に処理する時(例えばcaseクラスとのマッチングを取る場合に)最大限の働きをする。
+ただし、以下のようには書くべきではない。
 
 	animal match {
 	  case dog: Dog => "dog (%s)".format(dog.breed)
 	  case _ => animal.species
 	  }
 
-.LP write
+.LP 以下のように書いたほうが良い。
 
 	animal match {
 	  case Dog(breed) => "dog (%s)".format(breed)
 	  case other => other.species
 	}
 
-Write [custom extractors](http://www.scala-lang.org/node/112) but only with
-a dual constructor (`apply`), otherwise their use may be out of place.
+2つのコンストラクタ(`apply`)だけでなく、カスタム抽出子([custom extractors](http://www.scala-lang.org/node/112))を使いなさい、さもなければ不自然になる可能性がある。
 
-Don't use pattern matching for conditional execution when defaults
-make more sense. The collections libraries usually provide methods
-that return `Option`s; avoid
+デフォルトが意味を持つ時に、条件節の実行のためにパターンマッチングを使うべきではない。コレクションライブラリは常に`Option`を返り値とするメソッドを提供する。以下のように書くのは避けたい。
 
 	val x = list match {
 	  case head :: _ => head
 	  case Nil => default
 	}
 
-.LP because
+.LP なぜなら
 
 	val x = list.headOption getOrElse default
 
-.LP is both shorter and communicates purpose.
+.LP の方がより短く、目的を伝わりやすいからだ。
 
-### Partial functions
+### 部分関数
 
-Scala provides syntactical shorthand for defining a `PartialFunction`:
+Scalaは部分関数(`PartialFunction`)を定義するための簡単な構文を提供する：
 
 	val pf: PartialFunction[Int, String] = {
 	  case i if i%2 == 0 => "even"
 	}
 	
-.LP and they may be composed with <code>orElse</code>
+.LP さらにこれらの構文は<code>orElse</code>とともに使用することができる。
 
 	val tf: (Int => String) = pf orElse { case _ => "odd"}
 	
 	tf(1) == "odd"
 	tf(2) == "even"
 
-Partial functions arise in many situations and are effectively
-encoded with `PartialFunction`, for example as arguments to
-methods
+部分関数は多くのシチュエーションで発生し、`PartialFunction`構文と一緒に使うと効率的にエンコードされる。
+メソッドの引数として利用する例：
 
 	trait Publisher[T] {
 	  def subscribe(f: PartialFunction[T, Unit])
@@ -731,16 +730,16 @@ methods
 	  /* ignore the rest */
 	}
 
-.LP or in situations that might otherwise call for returning an <code>Option</code>:
+.LP また状況によっては<code>Option</code>型の戻り値を返すためにコールする可能性もある。
 
 	// Attempt to classify the the throwable for logging.
 	type Classifier = Throwable => Option[java.util.logging.Level]
 
-.LP might be better expressed with a <code>PartialFunction</code>
+.LP これも<code>PartialFunction</code>を使って表現する方が良い。
 
 	type Classifier = PartialFunction[Throwable, java.util.Logging.Level]
 	
-.LP as it affords greater composability:
+.LP 大きな構成可能性(composability)を許容する。:
 
 	val classifier1: Classifier
 	val classifier2: Classifier
@@ -748,12 +747,9 @@ methods
 	val classifier = classifier1 orElse classifier2 orElse { _ => java.util.Logging.Level.FINEST }
 
 
-### Destructuring bindings
+### 構造化代入
 
-Destructuring value bindings are related to pattern matching; they use the same
-mechanism but are applicable when there is exactly one option (lest you accept
-the possibility of an exception). Destructuring binds are particularly useful for
-tuples and case classes.
+構造化代入はパターンマッチングと関連付けられる。同じメカニズムを使うが、一つのオプションしかない場合(例外の可能性がある場合)に応用できる。構造化代入はタプルやCaseクラスによって特に使いやすくなる。
 
 	val tuple = ('a', 1)
 	val (char, digit) = tuple
@@ -761,15 +757,13 @@ tuples and case classes.
 	val tweet = Tweet("just tweeting", Time.now)
 	val Tweet(text, timestamp) = tweet
 
-### Lazyness
+### 遅延評価
 
-Fields in scala are computed *by need* when `val` is prefixed with
-`lazy`. Because fields and methods are equivalent in Scala (lest the fields
-are `private[this]`)
+`val`の前に`lazy`と書くとScalaのフィールドは必要になったら(*by need*)計算されるようになる。その理由はフィールドとメソッドはScalaの上で(フィールドが `private[this]`になるように)等価だからだ。
 
 	lazy val field = computation()
 
-.LP is (roughly) short-hand for
+.LP は、以下の書き方を(粗く)簡潔に書いたものである。
 
 	var _theField = None
 	def field = if (_theField.isDefined) _theField.get else {
@@ -777,32 +771,21 @@ are `private[this]`)
 	  _theField.get
 	}
 
-.LP i.e., it computes a results and memoizes it. Use lazy fields for this purpose, but avoid using lazyness when lazyness is required by semantics. In these cases it's better to be explicit since it makes the cost model explicit, and side effects can be controlled more precisely.
+.LP つまり、結果を計算し、それをメモ化する。この目的のために遅延フィールドを使おう、しかし遅延評価が意味を持って(by semantics)要求される時に遅延評価を使うのは避けよう。この場合、コスト構造を明確にし、副作用をより正確にコントロールするために明示しておくことが良い。
 
-Lazy fields are thread safe.
+遅延フィールドはスレッドセーフである。
 
-### Call by name
+### 名前呼出し
 
-Method parameters may be specified by-name, meaning the parameter is
-bound not to a value but to a *computation* that may be repeated. This
-feature must be applied with care; a caller expecting by-value
-semantics will be surprised. The motivation for this feature is to
-construct syntactically natural DSLs -- new control constructs in
-particular can be made to look much like native language features.
+メソッドの引数は名前渡しで特定される、引数の中身は必ずしも値である必要はなく *計算式* (繰り返し使われる可能性がある)であれば良い。この機能は注意して適用しなければならない; 呼び出し元が値渡しを意図している場合は意図しない結果になる可能性があるからだ。この機能は構文的に自然なドメイン特定言語(DSL)を構成するためにある。新しい特別な制御機構を自然言語のように見せる事ができる。
 
-Only use call-by-name for such control constructs, where it is obvious
-to the caller that what is being passed in is a "block" rather than
-the result of an unsuspecting computation. Only use call-by-name arguments
-in the last position of the last argument list. When using call-by-name,
-ensure that method is named so that it is obvious to the caller that 
-its argument is call-by-name.
+通りすぎてしまうのは予期しない計算式の結果よりもむしろ"ブロック"である、その事は呼び出し元に明らかにし、そのような制御機構のためだけに名前呼び出しを使おう。最後の引数リストの最後にある引数だけを名前呼出し用に使いなさい。名前呼出しを使っている時、引数が名前呼出しになっている事を呼び出し元に明らかになるようにメソッドが命名されていることを保証しなさい。
 
-When you do want a value to be computed multiple times, and especially
-when this computation is side effecting, use explicit functions:
+ある値を複数回計算したいと思った時、計算時に副作用がある、明らかに関数を使った方が良い:
 
 	class SSLConnector(mkEngine: () => SSLEngine)
 	
-.LP The intent remains obvious and caller is left without surprises.
+.LP 目的は明らかに残しつつ、呼び出し元は驚くことはなくなる。
 
 ### `flatMap`
 
