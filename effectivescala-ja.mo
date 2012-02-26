@@ -789,14 +789,11 @@ Scalaは部分関数(`PartialFunction`)を定義するための簡単な構文�
 
 ### `flatMap`
 
-`flatMap` -- the combination of `map` with `flatten` -- deserves special
-attention, for it has subtle power and great utility. Like its brethren `map`, it is frequently
-available in nontraditional collections such as `Future` and `Option`. Its behavior
-is revealed by its signature; for some `Container[A]`
+`flatMap` -- フラットにする機能を持つマップ -- は巧みな能力と偉大なユーティリティを併せ持つ注目に値する機能である。`map`はその兄弟のようなもので、`Future`や`Option`等の非伝統的なコレクション内で頻繁に利用できる。振る舞いはシグネチャやいくつかの`Container[A]`のような書き方で明らかにされる。
 
 	flatMap[B](f: A => Container[B]): Container[B]
 
-.LP <code>flatMap</code> invokes the function <code>f</code> for the element(s) of the collection producing a <em>new</em> collection, (all of) which are flattened into its result. For example, to get all permutations of two character strings that aren't the same character repeated twice:
+.LP 上記の<code>flatMap</code>はコレクションの要素に対して関数<code>f</code>を実行し、結果としてフラットになった<em>新しい</em>コレクションを提供する。同じ文字列を除き2回繰り返された2つの文字列を生成する例を紹介する:
 
 	val chars = 'a' to 'z'
 	val perms = chars flatMap { a => 
@@ -806,7 +803,7 @@ is revealed by its signature; for some `Container[A]`
 	  }
 	}
 
-.LP which is equivalent to the more concise for-comprehension (which is &mdash; roughly &mdash; syntactical sugar for the above):
+.LP (上記のシンタックスシュガーである) for-comprehension を利用すれば、より簡潔で等価なものになる:
 
 	val perms = for {
 	  a <- chars
@@ -814,8 +811,7 @@ is revealed by its signature; for some `Container[A]`
 	  if a != b
 	} yield "%c%c".format(a, b)
 
-`flatMap` is frequently useful when dealing with `Options` -- it will
-collapse chains of options down to one,
+`flatMap` は(Optionの連関を畳み込んで一つにするときなど)`Option`を処理する時に頻繁に役に立つ。
 
 	val host: Option[String] = ..
 	val port: Option[Int] = ..
@@ -827,15 +823,14 @@ collapse chains of options down to one,
 	    }
 	  }
 
-.LP which is also made more succinct with <code>for</code>
+.LP <code>for</code>を使えばもっと簡潔に表せる、
 
 	val addr: Option[InetSocketAddress] = for {
 	  h <- host
 	  p <- port
 	} yield new InetSocketAddress(h, p)
 
-The use of `flatMap` in `Future`s is discussed in the 
-<a href="#Twitter's%20standard%20libraries-Futures">futures section</a>.
+`Future`内で`flatMap`の使用は <a href="#Twitter's%20standard%20libraries-Futures">futures section</a> で議論がされている。
 
 ## オブジェクト指向プログラミング
 
