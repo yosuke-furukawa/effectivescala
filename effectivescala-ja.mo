@@ -789,11 +789,11 @@ Scalaは部分関数(`PartialFunction`)を定義するための簡単な構文�
 
 ### `flatMap`
 
-`flatMap` -- フラットにする機能を持つマップ -- は巧みな能力と偉大なユーティリティを併せ持つ注目に値する機能である。`map`はその兄弟のようなもので、`Future`や`Option`等の非伝統的なコレクション内で頻繁に利用できる。振る舞いはシグネチャやいくつかの`Container[A]`のような書き方で明らかにされる。
+`flatMap` -- フラットにする機能を持つマップ -- は巧みな能力と偉大なユーティリティを併せ持つ注目に値する機能である。`map`はその兄弟のようなもので、`Future`や`Option`等の非伝統的なコレクション内で頻繁に利用できる。その振る舞いは`Container[A]`のようなシグネチャで明らかにされる。
 
 	flatMap[B](f: A => Container[B]): Container[B]
 
-.LP 上記の<code>flatMap</code>はコレクションの要素に対して関数<code>f</code>を実行し、結果としてフラットになった<em>新しい</em>コレクションを提供する。同じ文字列を除き2回繰り返された2つの文字列を生成する例を紹介する:
+.LP 上記の<code>flatMap</code>はコレクションの要素に対して関数<code>f</code>を実行し、結果としてフラットになった<em>新しい</em>コレクションを提供する。同じ文字列を除いた2つの文字の順列を生成する例を紹介する:
 
 	val chars = 'a' to 'z'
 	val perms = chars flatMap { a => 
@@ -803,7 +803,7 @@ Scalaは部分関数(`PartialFunction`)を定義するための簡単な構文�
 	  }
 	}
 
-.LP (上記のシンタックスシュガーである) for-comprehension を利用すれば、より簡潔で等価なものになる:
+.LP (粗く言えば、上記のシンタックスシュガーである) for-comprehension を利用すれば、より簡潔で等価なものになる:
 
 	val perms = for {
 	  a <- chars
@@ -823,7 +823,7 @@ Scalaは部分関数(`PartialFunction`)を定義するための簡単な構文�
 	    }
 	  }
 
-.LP <code>for</code>を使えばもっと簡潔に表せる、
+.LP これも<code>for</code>を使えばもっと簡潔に表せる、
 
 	val addr: Option[InetSocketAddress] = for {
 	  h <- host
